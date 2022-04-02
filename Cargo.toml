@@ -1,12 +1,17 @@
 [package]
 name = "gdvariants"
 version = "0.1.0"
-authors = ["Hrafn Orri Hrafnkelsson <HrafnOrri@BitCrow.net>"]
-edition = "2021"
-license = "MIT"
-description = "Rust std library collections wrapper that implements the godot-rust Variant traits."
-repository = "https://github.com/ironpeak/gdvariants"
+authors = ["Hrafn Orri Hrafnkelsson"]
+license = "MIT OR Apache-2.0"
 readme = "README.md"
+repository = "https://github.com/ironpeak/gdvariants"
+description = """
+Rust std library collections wrapper that implements the godot-rust variant traits.
+"""
+keywords = ["gamedev", "godot"]
+categories = ["game-development"]
+edition = "2021"
+include = ["src/", "LICENSE-*", "README.md", "COPYRIGHT"]
 
 [dependencies]
 gdnative = "0.10.0"
