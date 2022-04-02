@@ -1,11 +1,12 @@
 [package]
 name = "gdvariants"
-description = "Rust std library collections that implementing GoDot Variant."
 version = "0.1.0"
-license = "MIT"
-readme = "README.md"
 authors = ["Hrafn Orri Hrafnkelsson <HrafnOrri@BitCrow.net>"]
 edition = "2021"
+license = "MIT"
+description = "Rust std library collections wrapper that implements the godot-rust Variant traits."
+repository = "https://github.com/ironpeak/gdvariants"
+readme = "README.md"
 
 [dependencies]
 gdnative = "0.10.0"
