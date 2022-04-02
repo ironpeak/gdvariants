@@ -10,7 +10,7 @@ use gdnative::core_types::Dictionary;
 use gdnative::prelude::*;
 
 pub struct HashMap<K, V, S = RandomState> {
-    hash_map: std::collections::HashMap<K, V, S>,
+    base: std::collections::HashMap<K, V, S>,
 }
 
 impl<K, V, S> FromVariant for HashMap<K, V, S>
@@ -39,7 +39,7 @@ where
 {
     fn to_variant(&self) -> Variant {
         let dictionary = Dictionary::new();
-        for (key, value) in &self.hash_map {
+        for (key, value) in &self.base {
             dictionary.insert(key, value);
         }
         dictionary.owned_to_variant()
@@ -49,13 +49,13 @@ where
 impl<K, V> HashMap<K, V, RandomState> {
     pub fn new() -> HashMap<K, V> {
         HashMap {
-            hash_map: std::collections::HashMap::new(),
+            base: std::collections::HashMap::new(),
         }
     }
 
     pub fn with_capacity(capacity: usize) -> HashMap<K, V> {
         HashMap {
-            hash_map: std::collections::HashMap::with_capacity(capacity),
+            base: std::collections::HashMap::with_capacity(capacity),
         }
     }
 }
@@ -63,73 +63,73 @@ impl<K, V> HashMap<K, V, RandomState> {
 impl<K, V, S> HashMap<K, V, S> {
     pub fn with_hasher(hash_builder: S) -> HashMap<K, V, S> {
         HashMap {
-            hash_map: std::collections::HashMap::with_hasher(hash_builder),
+            base: std::collections::HashMap::with_hasher(hash_builder),
         }
     }
 
     pub fn with_capacity_and_hasher(capacity: usize, hash_builder: S) -> HashMap<K, V, S> {
         HashMap {
-            hash_map: std::collections::HashMap::with_capacity_and_hasher(capacity, hash_builder),
+            base: std::collections::HashMap::with_capacity_and_hasher(capacity, hash_builder),
         }
     }
 
     pub fn capacity(&self) -> usize {
-        self.hash_map.capacity()
+        self.base.capacity()
     }
 
     pub fn keys(&self) -> Keys<'_, K, V> {
-        self.hash_map.keys()
+        self.base.keys()
     }
 
     pub fn into_keys(self) -> IntoKeys<K, V> {
-        self.hash_map.into_keys()
+        self.base.into_keys()
     }
 
     pub fn values(&self) -> Values<'_, K, V> {
-        self.hash_map.values()
+        self.base.values()
     }
 
     pub fn values_mut(&mut self) -> ValuesMut<'_, K, V> {
-        self.hash_map.values_mut()
+        self.base.values_mut()
     }
 
     pub fn into_values(self) -> IntoValues<K, V> {
-        self.hash_map.into_values()
+        self.base.into_values()
     }
 
     pub fn iter(&self) -> Iter<'_, K, V> {
-        self.hash_map.iter()
+        self.base.iter()
     }
 
     pub fn iter_mut(&mut self) -> IterMut<'_, K, V> {
-        self.hash_map.iter_mut()
+        self.base.iter_mut()
     }
 
     pub fn len(&self) -> usize {
-        self.hash_map.len()
+        self.base.len()
     }
 
     pub fn is_empty(&self) -> bool {
-        self.hash_map.is_empty()
+        self.base.is_empty()
     }
 
     pub fn drain(&mut self) -> Drain<'_, K, V> {
-        self.hash_map.drain()
+        self.base.drain()
     }
 
     pub fn retain<F>(&mut self, f: F)
     where
         F: FnMut(&K, &mut V) -> bool,
     {
-        self.hash_map.retain::<F>(f)
+        self.base.retain::<F>(f)
     }
 
     pub fn clear(&mut self) {
-        self.hash_map.clear()
+        self.base.clear()
     }
 
     pub fn hasher(&self) -> &S {
-        self.hash_map.hasher()
+        self.base.hasher()
     }
 }
 
@@ -139,23 +139,23 @@ where
     S: BuildHasher,
 {
     pub fn reserve(&mut self, additional: usize) {
-        self.hash_map.reserve(additional)
+        self.base.reserve(additional)
     }
 
     pub fn try_reserve(&mut self, additional: usize) -> Result<(), TryReserveError> {
-        self.hash_map.try_reserve(additional)
+        self.base.try_reserve(additional)
     }
 
     pub fn shrink_to_fit(&mut self) {
-        self.hash_map.shrink_to_fit()
+        self.base.shrink_to_fit()
     }
 
     pub fn shrink_to(&mut self, min_capacity: usize) {
-        self.hash_map.shrink_to(min_capacity)
+        self.base.shrink_to(min_capacity)
     }
 
     pub fn entry(&mut self, key: K) -> Entry<'_, K, V> {
-        self.hash_map.entry(key)
+        self.base.entry(key)
     }
 
     pub fn get<Q: ?Sized>(&self, k: &Q) -> Option<&V>
@@ -163,7 +163,7 @@ where
         K: Borrow<Q>,
         Q: Hash + Eq,
     {
-        self.hash_map.get(k)
+        self.base.get(k)
     }
 
     pub fn get_key_value<Q: ?Sized>(&self, k: &Q) -> Option<(&K, &V)>
@@ -171,7 +171,7 @@ where
         K: Borrow<Q>,
         Q: Hash + Eq,
     {
-        self.hash_map.get_key_value(k)
+        self.base.get_key_value(k)
     }
 
     pub fn contains_key<Q: ?Sized>(&self, k: &Q) -> bool
@@ -179,7 +179,7 @@ where
         K: Borrow<Q>,
         Q: Hash + Eq,
     {
-        self.hash_map.contains_key(k)
+        self.base.contains_key(k)
     }
 
     pub fn get_mut<Q: ?Sized>(&mut self, k: &Q) -> Option<&mut V>
@@ -187,11 +187,11 @@ where
         K: Borrow<Q>,
         Q: Hash + Eq,
     {
-        self.hash_map.get_mut(k)
+        self.base.get_mut(k)
     }
 
     pub fn insert(&mut self, k: K, v: V) -> Option<V> {
-        self.hash_map.insert(k, v)
+        self.base.insert(k, v)
     }
 
     pub fn remove<Q: ?Sized>(&mut self, k: &Q) -> Option<V>
@@ -199,7 +199,7 @@ where
         K: Borrow<Q>,
         Q: Hash + Eq,
     {
-        self.hash_map.remove(k)
+        self.base.remove(k)
     }
 
     pub fn remove_entry<Q: ?Sized>(&mut self, k: &Q) -> Option<(K, V)>
@@ -207,7 +207,7 @@ where
         K: Borrow<Q>,
         Q: Hash + Eq,
     {
-        self.hash_map.remove_entry(k)
+        self.base.remove_entry(k)
     }
 }
 
@@ -219,12 +219,12 @@ where
 {
     fn clone(&self) -> Self {
         HashMap {
-            hash_map: self.hash_map.clone(),
+            base: self.base.clone(),
         }
     }
 
     fn clone_from(&mut self, other: &Self) {
-        self.hash_map.clone_from(&other.hash_map)
+        self.base.clone_from(&other.base)
     }
 }
 
@@ -235,7 +235,7 @@ where
     S: BuildHasher,
 {
     fn eq(&self, other: &HashMap<K, V, S>) -> bool {
-        self.hash_map.eq(&other.hash_map)
+        self.base.eq(&other.base)
     }
 }
 
@@ -253,7 +253,7 @@ where
     V: Debug,
 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        self.hash_map.fmt(f)
+        self.base.fmt(f)
     }
 }
 
@@ -263,7 +263,7 @@ where
 {
     fn default() -> HashMap<K, V, S> {
         HashMap {
-            hash_map: std::collections::HashMap::default(),
+            base: std::collections::HashMap::default(),
         }
     }
 }
@@ -277,7 +277,7 @@ where
     type Output = V;
 
     fn index(&self, index: &'_ Q) -> &Self::Output {
-        self.hash_map.index(index)
+        self.base.index(index)
     }
 }
 
@@ -295,7 +295,7 @@ impl<'a, K, V, S> IntoIterator for &'a HashMap<K, V, S> {
     type IntoIter = Iter<'a, K, V>;
 
     fn into_iter(self) -> Self::IntoIter {
-        self.hash_map.iter()
+        self.base.iter()
     }
 }
 
@@ -304,7 +304,7 @@ impl<'a, K, V, S> IntoIterator for &'a mut HashMap<K, V, S> {
     type IntoIter = IterMut<'a, K, V>;
 
     fn into_iter(self) -> IterMut<'a, K, V> {
-        self.hash_map.iter_mut()
+        self.base.iter_mut()
     }
 }
 
@@ -313,7 +313,7 @@ impl<K, V, S> IntoIterator for HashMap<K, V, S> {
     type IntoIter = IntoIter<K, V>;
 
     fn into_iter(self) -> IntoIter<K, V> {
-        self.hash_map.into_iter()
+        self.base.into_iter()
     }
 }
 
@@ -335,7 +335,7 @@ where
     S: BuildHasher,
 {
     fn extend<T: IntoIterator<Item = (K, V)>>(&mut self, iter: T) {
-        self.hash_map.extend(iter)
+        self.base.extend(iter)
     }
 }
 

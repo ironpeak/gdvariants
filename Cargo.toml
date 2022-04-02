@@ -7,8 +7,5 @@ readme = "README.md"
 authors = ["Hrafn Orri Hrafnkelsson <HrafnOrri@BitCrow.net>"]
 edition = "2021"
 
-[lib]
-crate-type=["cdylib"]
-
 [dependencies]
 gdnative = "0.10.0"
