@@ -1,15 +1,20 @@
 // Source: https://doc.rust-lang.org/src/std/collections/hash/map.rs.html
 
 use std;
-use std::borrow::*;
-use std::collections::hash_map::*;
-use std::collections::*;
-use std::fmt::Debug;
-use std::hash::*;
-use std::ops::*;
+use std::{
+    borrow::Borrow,
+    collections::hash_map::{
+        Drain, Entry, IntoIter, IntoKeys, IntoValues, Iter, IterMut, Keys, RandomState, Values,
+        ValuesMut,
+    },
+};
+use std::{collections::TryReserveError, fmt::Debug};
+use std::{
+    hash::{BuildHasher, Hash},
+    ops::{FnMut, Index},
+};
 
-use gdnative::core_types::Dictionary;
-use gdnative::prelude::*;
+use gdnative::{core_types::Dictionary, prelude::*};
 
 /// A [hash map] implemented with quadratic probing and SIMD lookup.
 ///
