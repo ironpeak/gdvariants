@@ -1,0 +1,14 @@
+[package]
+name = "gdvariants"
+description = "Rust std library collections that implementing GoDot Variant."
+version = "0.1.0"
+license = "MIT"
+readme = "README.md"
+authors = ["Hrafn Orri Hrafnkelsson <HrafnOrri@BitCrow.net>"]
+edition = "2021"
+
+[lib]
+crate-type=["cdylib"]
+
+[dependencies]
+gdnative = "0.10.0"
