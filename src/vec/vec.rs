@@ -146,8 +146,8 @@ impl<T> Vec<T> {
     /// that nothing else uses the pointer after calling this
     /// function.
     ///
-    /// [`String`]: crate::string::String
-    /// [`dealloc`]: crate::alloc::GlobalAlloc::dealloc
+    /// [`String`]: std::string::String
+    /// [`dealloc`]: std::alloc::GlobalAlloc::dealloc
     ///
     /// # Examples
     ///
@@ -823,7 +823,7 @@ impl<T> Vec<T> {
     ///
     /// When the iterator **is** dropped, all elements in the range are removed
     /// from the vector, even if the iterator was not fully consumed. If the
-    /// iterator **is not** dropped (with [`mem::forget`] for example), it is
+    /// iterator **is not** dropped (with [`std::mem::forget`] for example), it is
     /// unspecified how many elements are removed.
     ///
     /// # Panics

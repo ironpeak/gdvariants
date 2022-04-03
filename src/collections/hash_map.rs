@@ -172,8 +172,8 @@ use gdnative::{
 /// The easiest way to use `HashMap` with a custom key type is to derive [`Eq`] and [`Hash`].
 /// We must also derive [`PartialEq`].
 ///
-/// [`RefCell`]: crate::cell::RefCell
-/// [`Cell`]: crate::cell::Cell
+/// [`RefCell`]: std::cell::RefCell
+/// [`Cell`]: std::cell::Cell
 /// [`default`]: Default::default
 /// [`with_hasher`]: Self::with_hasher
 /// [`with_capacity_and_hasher`]: Self::with_capacity_and_hasher
