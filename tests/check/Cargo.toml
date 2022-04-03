@@ -4,5 +4,5 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-clap = "3"
-serde = "1"
+clap = {version = "3", features = ["derive"]}
+serde = {version = "1", features = ["derive"]}
