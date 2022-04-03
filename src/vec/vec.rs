@@ -1,11 +1,12 @@
 // Source: https://doc.rust-lang.org/src/alloc/vec/mod.rs.html
 
 use std::{
+    cmp::Ordering,
     collections::TryReserveError,
     hash::{Hash, Hasher},
     ops::{Deref, DerefMut, Index, IndexMut, RangeBounds},
     slice::{self, IterMut, SliceIndex},
-    vec::Drain,
+    vec::{Drain, IntoIter, Splice},
 };
 
 pub struct Vec<T> {
@@ -1125,47 +1126,28 @@ impl<T> FromIterator<T> for Vec<T> {
     }
 }
 
-// #[stable(feature = "rust1", since = "1.0.0")]
-// impl<T, A: Allocator> IntoIterator for Vec<T, A> {
-//     type Item = T;
-//     type IntoIter = IntoIter<T, A>;
+impl<T> IntoIterator for Vec<T> {
+    type Item = T;
+    type IntoIter = IntoIter<T>;
 
-//     /// Creates a consuming iterator, that is, one that moves each value out of
-//     /// the vector (from start to end). The vector cannot be used after calling
-//     /// this.
-//     ///
-//     /// # Examples
-//     ///
-//     /// ```
-//     /// let v = vec!["a".to_string(), "b".to_string()];
-//     /// for s in v.into_iter() {
-//     ///     // s has type String, not &String
-//     ///     println!("{}", s);
-//     /// }
-//     /// ```
-//     #[inline]
-//     fn into_iter(self) -> IntoIter<T, A> {
-//         unsafe {
-//             let mut me = ManuallyDrop::new(self);
-//             let alloc = ptr::read(me.allocator());
-//             let begin = me.as_mut_ptr();
-//             let end = if mem::size_of::<T>() == 0 {
-//                 arith_offset(begin as *const i8, me.len() as isize) as *const T
-//             } else {
-//                 begin.add(me.len()) as *const T
-//             };
-//             let cap = me.buf.capacity();
-//             IntoIter {
-//                 buf: NonNull::new_unchecked(begin),
-//                 phantom: PhantomData,
-//                 cap,
-//                 alloc,
-//                 ptr: begin,
-//                 end,
-//             }
-//         }
-//     }
-// }
+    /// Creates a consuming iterator, that is, one that moves each value out of
+    /// the vector (from start to end). The vector cannot be used after calling
+    /// this.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let v = vec!["a".to_string(), "b".to_string()];
+    /// for s in v.into_iter() {
+    ///     // s has type String, not &String
+    ///     println!("{}", s);
+    /// }
+    /// ```
+    #[inline]
+    fn into_iter(self) -> IntoIter<T> {
+        self.base.into_iter()
+    }
+}
 
 impl<'a, T> IntoIterator for &'a Vec<T> {
     type Item = &'a T;
@@ -1192,214 +1174,92 @@ impl<T> Extend<T> for Vec<T> {
     }
 }
 
-// impl<T, A: Allocator> Vec<T, A> {
-//     // leaf method to which various SpecFrom/SpecExtend implementations delegate when
-//     // they have no further optimizations to apply
-//     #[cfg(not(no_global_oom_handling))]
-//     fn extend_desugared<I: Iterator<Item = T>>(&mut self, mut iterator: I) {
-//         // This is the case for a general iterator.
-//         //
-//         // This function should be the moral equivalent of:
-//         //
-//         //      for item in iterator {
-//         //          self.push(item);
-//         //      }
-//         while let Some(element) = iterator.next() {
-//             let len = self.len();
-//             if len == self.capacity() {
-//                 let (lower, _) = iterator.size_hint();
-//                 self.reserve(lower.saturating_add(1));
-//             }
-//             unsafe {
-//                 ptr::write(self.as_mut_ptr().add(len), element);
-//                 // Since next() executes user code which can panic we have to bump the length
-//                 // after each step.
-//                 // NB can't overflow since we would have had to alloc the address space
-//                 self.set_len(len + 1);
-//             }
-//         }
-//     }
+impl<T> Vec<T> {
+    /// Creates a splicing iterator that replaces the specified range in the vector
+    /// with the given `replace_with` iterator and yields the removed items.
+    /// `replace_with` does not need to be the same length as `range`.
+    ///
+    /// `range` is removed even if the iterator is not consumed until the end.
+    ///
+    /// It is unspecified how many elements are removed from the vector
+    /// if the `Splice` value is leaked.
+    ///
+    /// The input iterator `replace_with` is only consumed when the `Splice` value is dropped.
+    ///
+    /// This is optimal if:
+    ///
+    /// * The tail (elements in the vector after `range`) is empty,
+    /// * or `replace_with` yields fewer or equal elements than `range`’s length
+    /// * or the lower bound of its `size_hint()` is exact.
+    ///
+    /// Otherwise, a temporary vector is allocated and the tail is moved twice.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the starting point is greater than the end point or if
+    /// the end point is greater than the length of the vector.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let mut v = vec![1, 2, 3, 4];
+    /// let new = [7, 8, 9];
+    /// let u: Vec<_> = v.splice(1..3, new).collect();
+    /// assert_eq!(v, &[1, 7, 8, 9, 4]);
+    /// assert_eq!(u, &[2, 3]);
+    /// ```
+    #[inline]
+    pub fn splice<R, I>(&mut self, range: R, replace_with: I) -> Splice<'_, I::IntoIter>
+    where
+        R: RangeBounds<usize>,
+        I: IntoIterator<Item = T>,
+    {
+        self.base.splice(range, replace_with)
+    }
+}
 
-//     /// Creates a splicing iterator that replaces the specified range in the vector
-//     /// with the given `replace_with` iterator and yields the removed items.
-//     /// `replace_with` does not need to be the same length as `range`.
-//     ///
-//     /// `range` is removed even if the iterator is not consumed until the end.
-//     ///
-//     /// It is unspecified how many elements are removed from the vector
-//     /// if the `Splice` value is leaked.
-//     ///
-//     /// The input iterator `replace_with` is only consumed when the `Splice` value is dropped.
-//     ///
-//     /// This is optimal if:
-//     ///
-//     /// * The tail (elements in the vector after `range`) is empty,
-//     /// * or `replace_with` yields fewer or equal elements than `range`’s length
-//     /// * or the lower bound of its `size_hint()` is exact.
-//     ///
-//     /// Otherwise, a temporary vector is allocated and the tail is moved twice.
-//     ///
-//     /// # Panics
-//     ///
-//     /// Panics if the starting point is greater than the end point or if
-//     /// the end point is greater than the length of the vector.
-//     ///
-//     /// # Examples
-//     ///
-//     /// ```
-//     /// let mut v = vec![1, 2, 3, 4];
-//     /// let new = [7, 8, 9];
-//     /// let u: Vec<_> = v.splice(1..3, new).collect();
-//     /// assert_eq!(v, &[1, 7, 8, 9, 4]);
-//     /// assert_eq!(u, &[2, 3]);
-//     /// ```
-//     #[cfg(not(no_global_oom_handling))]
-//     #[inline]
-//     #[stable(feature = "vec_splice", since = "1.21.0")]
-//     pub fn splice<R, I>(&mut self, range: R, replace_with: I) -> Splice<'_, I::IntoIter, A>
-//     where
-//         R: RangeBounds<usize>,
-//         I: IntoIterator<Item = T>,
-//     {
-//         Splice {
-//             drain: self.drain(range),
-//             replace_with: replace_with.into_iter(),
-//         }
-//     }
+/// Extend implementation that copies elements out of references before pushing them onto the Vec.
+///
+/// This implementation is specialized for slice iterators, where it uses [`copy_from_slice`] to
+/// append the entire slice at once.
+///
+/// [`copy_from_slice`]: slice::copy_from_slice
+impl<'a, T: Copy + 'a> Extend<&'a T> for Vec<T> {
+    fn extend<I: IntoIterator<Item = &'a T>>(&mut self, iter: I) {
+        self.base.extend(iter)
+    }
+}
 
-//     /// Creates an iterator which uses a closure to determine if an element should be removed.
-//     ///
-//     /// If the closure returns true, then the element is removed and yielded.
-//     /// If the closure returns false, the element will remain in the vector and will not be yielded
-//     /// by the iterator.
-//     ///
-//     /// Using this method is equivalent to the following code:
-//     ///
-//     /// ```
-//     /// # let some_predicate = |x: &mut i32| { *x == 2 || *x == 3 || *x == 6 };
-//     /// # let mut vec = vec![1, 2, 3, 4, 5, 6];
-//     /// let mut i = 0;
-//     /// while i < vec.len() {
-//     ///     if some_predicate(&mut vec[i]) {
-//     ///         let val = vec.remove(i);
-//     ///         // your code here
-//     ///     } else {
-//     ///         i += 1;
-//     ///     }
-//     /// }
-//     ///
-//     /// # assert_eq!(vec, vec![1, 4, 5]);
-//     /// ```
-//     ///
-//     /// But `drain_filter` is easier to use. `drain_filter` is also more efficient,
-//     /// because it can backshift the elements of the array in bulk.
-//     ///
-//     /// Note that `drain_filter` also lets you mutate every element in the filter closure,
-//     /// regardless of whether you choose to keep or remove it.
-//     ///
-//     /// # Examples
-//     ///
-//     /// Splitting an array into evens and odds, reusing the original allocation:
-//     ///
-//     /// ```
-//     /// #![feature(drain_filter)]
-//     /// let mut numbers = vec![1, 2, 3, 4, 5, 6, 8, 9, 11, 13, 14, 15];
-//     ///
-//     /// let evens = numbers.drain_filter(|x| *x % 2 == 0).collect::<Vec<_>>();
-//     /// let odds = numbers;
-//     ///
-//     /// assert_eq!(evens, vec![2, 4, 6, 8, 14]);
-//     /// assert_eq!(odds, vec![1, 3, 5, 9, 11, 13, 15]);
-//     /// ```
-//     #[unstable(feature = "drain_filter", reason = "recently added", issue = "43244")]
-//     pub fn drain_filter<F>(&mut self, filter: F) -> DrainFilter<'_, T, F, A>
-//     where
-//         F: FnMut(&mut T) -> bool,
-//     {
-//         let old_len = self.len();
+impl<T: PartialEq> PartialEq for Vec<T> {
+    fn eq(&self, other: &Self) -> bool {
+        self.base == other.base
+    }
+}
 
-//         // Guard against us getting leaked (leak amplification)
-//         unsafe {
-//             self.set_len(0);
-//         }
+/// Implements comparison of vectors, [lexicographically](core::cmp::Ord#lexicographical-comparison).
+impl<T: PartialOrd> PartialOrd for Vec<T> {
+    #[inline]
+    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
+        self.base.partial_cmp(&other.base)
+    }
+}
 
-//         DrainFilter {
-//             vec: self,
-//             idx: 0,
-//             del: 0,
-//             old_len,
-//             pred: filter,
-//             panic_flag: false,
-//         }
-//     }
-// }
+impl<T: Eq> Eq for Vec<T> {}
 
-// /// Extend implementation that copies elements out of references before pushing them onto the Vec.
-// ///
-// /// This implementation is specialized for slice iterators, where it uses [`copy_from_slice`] to
-// /// append the entire slice at once.
-// ///
-// /// [`copy_from_slice`]: slice::copy_from_slice
-// #[cfg(not(no_global_oom_handling))]
-// #[stable(feature = "extend_ref", since = "1.2.0")]
-// impl<'a, T: Copy + 'a, A: Allocator + 'a> Extend<&'a T> for Vec<T, A> {
-//     fn extend<I: IntoIterator<Item = &'a T>>(&mut self, iter: I) {
-//         self.spec_extend(iter.into_iter())
-//     }
+/// Implements ordering of vectors, [lexicographically](core::cmp::Ord#lexicographical-comparison).
+impl<T: Ord> Ord for Vec<T> {
+    #[inline]
+    fn cmp(&self, other: &Self) -> Ordering {
+        self.base.cmp(&other.base)
+    }
+}
 
-//     #[inline]
-//     fn extend_one(&mut self, &item: &'a T) {
-//         self.push(item);
-//     }
-
-//     #[inline]
-//     fn extend_reserve(&mut self, additional: usize) {
-//         self.reserve(additional);
-//     }
-// }
-
-// /// Implements comparison of vectors, [lexicographically](core::cmp::Ord#lexicographical-comparison).
-// #[stable(feature = "rust1", since = "1.0.0")]
-// impl<T: PartialOrd, A: Allocator> PartialOrd for Vec<T, A> {
-//     #[inline]
-//     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-//         PartialOrd::partial_cmp(&**self, &**other)
-//     }
-// }
-
-// #[stable(feature = "rust1", since = "1.0.0")]
-// impl<T: Eq, A: Allocator> Eq for Vec<T, A> {}
-
-// /// Implements ordering of vectors, [lexicographically](core::cmp::Ord#lexicographical-comparison).
-// #[stable(feature = "rust1", since = "1.0.0")]
-// impl<T: Ord, A: Allocator> Ord for Vec<T, A> {
-//     #[inline]
-//     fn cmp(&self, other: &Self) -> Ordering {
-//         Ord::cmp(&**self, &**other)
-//     }
-// }
-
-// #[stable(feature = "rust1", since = "1.0.0")]
-// unsafe impl<#[may_dangle] T, A: Allocator> Drop for Vec<T, A> {
-//     fn drop(&mut self) {
-//         unsafe {
-//             // use drop for [T]
-//             // use a raw slice to refer to the elements of the vector as weakest necessary type;
-//             // could avoid questions of validity in certain cases
-//             ptr::drop_in_place(ptr::slice_from_raw_parts_mut(self.as_mut_ptr(), self.len))
-//         }
-//         // RawVec handles deallocation
-//     }
-// }
-
-// #[stable(feature = "rust1", since = "1.0.0")]
-// #[rustc_const_unstable(feature = "const_default_impls", issue = "87864")]
-// impl<T> const Default for Vec<T> {
-//     /// Creates an empty `Vec<T>`.
-//     fn default() -> Vec<T> {
-//         Vec::new()
-//     }
-// }
+impl<T> Default for Vec<T> {
+    /// Creates an empty `Vec<T>`.
+    fn default() -> Vec<T> {
+        Vec::new()
+    }
+}
 
 // #[stable(feature = "rust1", since = "1.0.0")]
 // impl<T: fmt::Debug, A: Allocator> fmt::Debug for Vec<T, A> {
@@ -1573,9 +1433,8 @@ impl<T> Extend<T> for Vec<T> {
 //     }
 // }
 
-// #[stable(feature = "array_try_from_vec", since = "1.48.0")]
-// impl<T, A: Allocator, const N: usize> TryFrom<Vec<T, A>> for [T; N] {
-//     type Error = Vec<T, A>;
+// impl<T, const N: usize> TryFrom<Vec<T>> for [T; N] {
+//     type Error = Vec<T>;
 
 //     /// Gets the entire contents of the `Vec<T>` as an array,
 //     /// if its size exactly matches that of the requested array.
@@ -1606,20 +1465,7 @@ impl<T> Extend<T> for Vec<T> {
 //     /// assert_eq!(a, b' ');
 //     /// assert_eq!(b, b'd');
 //     /// ```
-//     fn try_from(mut vec: Vec<T, A>) -> Result<[T; N], Vec<T, A>> {
-//         if vec.len() != N {
-//             return Err(vec);
-//         }
-
-//         // SAFETY: `.set_len(0)` is always sound.
-//         unsafe { vec.set_len(0) };
-
-//         // SAFETY: A `Vec`'s pointer is always aligned properly, and
-//         // the alignment the array needs is the same as the items.
-//         // We checked earlier that we have sufficient items.
-//         // The items will not double-drop as the `set_len`
-//         // tells the `Vec` not to also drop them.
-//         let array = unsafe { ptr::read(vec.as_ptr() as *const [T; N]) };
-//         Ok(array)
+//     fn try_from(mut vec: Vec<T>) -> Result<[T; N], Vec<T>> {
+//         std::vec::Vec::try_from(vec)
 //     }
 // }
