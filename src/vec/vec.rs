@@ -1,8 +1,10 @@
 // Source: https://doc.rust-lang.org/src/alloc/vec/mod.rs.html
 
 use std::{
+    borrow::Cow,
     cmp::Ordering,
     collections::TryReserveError,
+    fmt::{self, Debug, Formatter},
     hash::{Hash, Hasher},
     ops::{Deref, DerefMut, Index, IndexMut, RangeBounds},
     slice::{self, IterMut, SliceIndex},
@@ -1082,18 +1084,6 @@ impl<T: Clone> Clone for Vec<T> {
     }
 }
 
-/// The hash of a vector is the same as that of the corresponding slice,
-/// as required by the `core::borrow::Borrow` implementation.
-///
-/// ```
-/// #![feature(build_hasher_simple_hash_one)]
-/// use std::hash::BuildHasher;
-///
-/// let b = std::collections::hash_map::RandomState::new();
-/// let v: Vec<u8> = vec![0xa8, 0x3c, 0x09];
-/// let s: &[u8] = &[0xa8, 0x3c, 0x09];
-/// assert_eq!(b.hash_one(v), b.hash_one(s));
-/// ```
 impl<T: Hash> Hash for Vec<T> {
     #[inline]
     fn hash<H: Hasher>(&self, state: &mut H) {
@@ -1261,211 +1251,133 @@ impl<T> Default for Vec<T> {
     }
 }
 
-// #[stable(feature = "rust1", since = "1.0.0")]
-// impl<T: fmt::Debug, A: Allocator> fmt::Debug for Vec<T, A> {
-//     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-//         fmt::Debug::fmt(&**self, f)
-//     }
-// }
+impl<T: Debug> Debug for Vec<T> {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        self.base.fmt(f)
+    }
+}
 
-// #[stable(feature = "rust1", since = "1.0.0")]
-// impl<T, A: Allocator> AsRef<Vec<T, A>> for Vec<T, A> {
-//     fn as_ref(&self) -> &Vec<T, A> {
-//         self
-//     }
-// }
+impl<T> AsRef<Vec<T>> for Vec<T> {
+    fn as_ref(&self) -> &Vec<T> {
+        self
+    }
+}
 
-// #[stable(feature = "vec_as_mut", since = "1.5.0")]
-// impl<T, A: Allocator> AsMut<Vec<T, A>> for Vec<T, A> {
-//     fn as_mut(&mut self) -> &mut Vec<T, A> {
-//         self
-//     }
-// }
+impl<T> AsMut<Vec<T>> for Vec<T> {
+    fn as_mut(&mut self) -> &mut Vec<T> {
+        self
+    }
+}
 
-// #[stable(feature = "rust1", since = "1.0.0")]
-// impl<T, A: Allocator> AsRef<[T]> for Vec<T, A> {
-//     fn as_ref(&self) -> &[T] {
-//         self
-//     }
-// }
+impl<T> AsRef<[T]> for Vec<T> {
+    fn as_ref(&self) -> &[T] {
+        self
+    }
+}
 
-// #[stable(feature = "vec_as_mut", since = "1.5.0")]
-// impl<T, A: Allocator> AsMut<[T]> for Vec<T, A> {
-//     fn as_mut(&mut self) -> &mut [T] {
-//         self
-//     }
-// }
+impl<T> AsMut<[T]> for Vec<T> {
+    fn as_mut(&mut self) -> &mut [T] {
+        self
+    }
+}
 
-// #[cfg(not(no_global_oom_handling))]
-// #[stable(feature = "rust1", since = "1.0.0")]
-// impl<T: Clone> From<&[T]> for Vec<T> {
-//     /// Allocate a `Vec<T>` and fill it by cloning `s`'s items.
-//     ///
-//     /// # Examples
-//     ///
-//     /// ```
-//     /// assert_eq!(Vec::from(&[1, 2, 3][..]), vec![1, 2, 3]);
-//     /// ```
-//     #[cfg(not(test))]
-//     fn from(s: &[T]) -> Vec<T> {
-//         s.to_vec()
-//     }
-//     #[cfg(test)]
-//     fn from(s: &[T]) -> Vec<T> {
-//         crate::slice::to_vec(s, Global)
-//     }
-// }
+impl<T: Clone> From<&[T]> for Vec<T> {
+    /// Allocate a `Vec<T>` and fill it by cloning `s`'s items.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// assert_eq!(Vec::from(&[1, 2, 3][..]), vec![1, 2, 3]);
+    /// ```
+    fn from(s: &[T]) -> Vec<T> {
+        Vec { base: s.to_vec() }
+    }
+}
 
-// #[cfg(not(no_global_oom_handling))]
-// #[stable(feature = "vec_from_mut", since = "1.19.0")]
-// impl<T: Clone> From<&mut [T]> for Vec<T> {
-//     /// Allocate a `Vec<T>` and fill it by cloning `s`'s items.
-//     ///
-//     /// # Examples
-//     ///
-//     /// ```
-//     /// assert_eq!(Vec::from(&mut [1, 2, 3][..]), vec![1, 2, 3]);
-//     /// ```
-//     #[cfg(not(test))]
-//     fn from(s: &mut [T]) -> Vec<T> {
-//         s.to_vec()
-//     }
-//     #[cfg(test)]
-//     fn from(s: &mut [T]) -> Vec<T> {
-//         crate::slice::to_vec(s, Global)
-//     }
-// }
+impl<T: Clone> From<&mut [T]> for Vec<T> {
+    /// Allocate a `Vec<T>` and fill it by cloning `s`'s items.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// assert_eq!(Vec::from(&mut [1, 2, 3][..]), vec![1, 2, 3]);
+    /// ```
+    fn from(s: &mut [T]) -> Vec<T> {
+        Vec { base: s.to_vec() }
+    }
+}
 
-// #[cfg(not(no_global_oom_handling))]
-// #[stable(feature = "vec_from_array", since = "1.44.0")]
-// impl<T, const N: usize> From<[T; N]> for Vec<T> {
-//     #[cfg(not(test))]
-//     fn from(s: [T; N]) -> Vec<T> {
-//         <[T]>::into_vec(box s)
-//     }
-//     /// Allocate a `Vec<T>` and move `s`'s items into it.
-//     ///
-//     /// # Examples
-//     ///
-//     /// ```
-//     /// assert_eq!(Vec::from([1, 2, 3]), vec![1, 2, 3]);
-//     /// ```
-//     #[cfg(test)]
-//     fn from(s: [T; N]) -> Vec<T> {
-//         crate::slice::into_vec(box s)
-//     }
-// }
+impl<T, const N: usize> From<[T; N]> for Vec<T> {
+    fn from(s: [T; N]) -> Vec<T> {
+        Vec {
+            base: <[T]>::into_vec(Box::new(s)),
+        }
+    }
+}
 
-// #[stable(feature = "vec_from_cow_slice", since = "1.14.0")]
-// impl<'a, T> From<Cow<'a, [T]>> for Vec<T>
-// where
-//     [T]: ToOwned<Owned = Vec<T>>,
-// {
-//     /// Convert a clone-on-write slice into a vector.
-//     ///
-//     /// If `s` already owns a `Vec<T>`, it will be returned directly.
-//     /// If `s` is borrowing a slice, a new `Vec<T>` will be allocated and
-//     /// filled by cloning `s`'s items into it.
-//     ///
-//     /// # Examples
-//     ///
-//     /// ```
-//     /// # use std::borrow::Cow;
-//     /// let o: Cow<[i32]> = Cow::Owned(vec![1, 2, 3]);
-//     /// let b: Cow<[i32]> = Cow::Borrowed(&[1, 2, 3]);
-//     /// assert_eq!(Vec::from(o), Vec::from(b));
-//     /// ```
-//     fn from(s: Cow<'a, [T]>) -> Vec<T> {
-//         s.into_owned()
-//     }
-// }
+impl<'a, T> From<Cow<'a, [T]>> for Vec<T>
+where
+    [T]: ToOwned<Owned = Vec<T>>,
+{
+    /// Convert a clone-on-write slice into a vector.
+    ///
+    /// If `s` already owns a `Vec<T>`, it will be returned directly.
+    /// If `s` is borrowing a slice, a new `Vec<T>` will be allocated and
+    /// filled by cloning `s`'s items into it.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use std::borrow::Cow;
+    /// let o: Cow<[i32]> = Cow::Owned(vec![1, 2, 3]);
+    /// let b: Cow<[i32]> = Cow::Borrowed(&[1, 2, 3]);
+    /// assert_eq!(Vec::from(o), Vec::from(b));
+    /// ```
+    fn from(s: Cow<'a, [T]>) -> Vec<T> {
+        s.into_owned()
+    }
+}
 
-// // note: test pulls in libstd, which causes errors here
-// #[cfg(not(test))]
-// #[stable(feature = "vec_from_box", since = "1.18.0")]
-// impl<T, A: Allocator> From<Box<[T], A>> for Vec<T, A> {
-//     /// Convert a boxed slice into a vector by transferring ownership of
-//     /// the existing heap allocation.
-//     ///
-//     /// # Examples
-//     ///
-//     /// ```
-//     /// let b: Box<[i32]> = vec![1, 2, 3].into_boxed_slice();
-//     /// assert_eq!(Vec::from(b), vec![1, 2, 3]);
-//     /// ```
-//     fn from(s: Box<[T], A>) -> Self {
-//         s.into_vec()
-//     }
-// }
+impl<T> From<Box<[T]>> for Vec<T> {
+    /// Convert a boxed slice into a vector by transferring ownership of
+    /// the existing heap allocation.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let b: Box<[i32]> = vec![1, 2, 3].into_boxed_slice();
+    /// assert_eq!(Vec::from(b), vec![1, 2, 3]);
+    /// ```
+    fn from(s: Box<[T]>) -> Self {
+        Vec { base: s.into_vec() }
+    }
+}
 
-// // note: test pulls in libstd, which causes errors here
-// #[cfg(not(no_global_oom_handling))]
-// #[cfg(not(test))]
-// #[stable(feature = "box_from_vec", since = "1.20.0")]
-// impl<T, A: Allocator> From<Vec<T, A>> for Box<[T], A> {
-//     /// Convert a vector into a boxed slice.
-//     ///
-//     /// If `v` has excess capacity, its items will be moved into a
-//     /// newly-allocated buffer with exactly the right capacity.
-//     ///
-//     /// # Examples
-//     ///
-//     /// ```
-//     /// assert_eq!(Box::from(vec![1, 2, 3]), vec![1, 2, 3].into_boxed_slice());
-//     /// ```
-//     fn from(v: Vec<T, A>) -> Self {
-//         v.into_boxed_slice()
-//     }
-// }
+impl<T> From<Vec<T>> for Box<[T]> {
+    /// Convert a vector into a boxed slice.
+    ///
+    /// If `v` has excess capacity, its items will be moved into a
+    /// newly-allocated buffer with exactly the right capacity.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// assert_eq!(Box::from(vec![1, 2, 3]), vec![1, 2, 3].into_boxed_slice());
+    /// ```
+    fn from(v: Vec<T>) -> Self {
+        v.into_boxed_slice()
+    }
+}
 
-// #[cfg(not(no_global_oom_handling))]
-// #[stable(feature = "rust1", since = "1.0.0")]
-// impl From<&str> for Vec<u8> {
-//     /// Allocate a `Vec<u8>` and fill it with a UTF-8 string.
-//     ///
-//     /// # Examples
-//     ///
-//     /// ```
-//     /// assert_eq!(Vec::from("123"), vec![b'1', b'2', b'3']);
-//     /// ```
-//     fn from(s: &str) -> Vec<u8> {
-//         From::from(s.as_bytes())
-//     }
-// }
-
-// impl<T, const N: usize> TryFrom<Vec<T>> for [T; N] {
-//     type Error = Vec<T>;
-
-//     /// Gets the entire contents of the `Vec<T>` as an array,
-//     /// if its size exactly matches that of the requested array.
-//     ///
-//     /// # Examples
-//     ///
-//     /// ```
-//     /// use std::convert::TryInto;
-//     /// assert_eq!(vec![1, 2, 3].try_into(), Ok([1, 2, 3]));
-//     /// assert_eq!(<Vec<i32>>::new().try_into(), Ok([]));
-//     /// ```
-//     ///
-//     /// If the length doesn't match, the input comes back in `Err`:
-//     /// ```
-//     /// use std::convert::TryInto;
-//     /// let r: Result<[i32; 4], _> = (0..10).collect::<Vec<_>>().try_into();
-//     /// assert_eq!(r, Err(vec![0, 1, 2, 3, 4, 5, 6, 7, 8, 9]));
-//     /// ```
-//     ///
-//     /// If you're fine with just getting a prefix of the `Vec<T>`,
-//     /// you can call [`.truncate(N)`](Vec::truncate) first.
-//     /// ```
-//     /// use std::convert::TryInto;
-//     /// let mut v = String::from("hello world").into_bytes();
-//     /// v.sort();
-//     /// v.truncate(2);
-//     /// let [a, b]: [_; 2] = v.try_into().unwrap();
-//     /// assert_eq!(a, b' ');
-//     /// assert_eq!(b, b'd');
-//     /// ```
-//     fn try_from(mut vec: Vec<T>) -> Result<[T; N], Vec<T>> {
-//         std::vec::Vec::try_from(vec)
-//     }
-// }
+impl From<&str> for Vec<u8> {
+    /// Allocate a `Vec<u8>` and fill it with a UTF-8 string.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// assert_eq!(Vec::from("123"), vec![b'1', b'2', b'3']);
+    /// ```
+    fn from(s: &str) -> Vec<u8> {
+        From::from(s.as_bytes())
+    }
+}
