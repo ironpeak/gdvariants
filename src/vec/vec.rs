@@ -1,10 +1,10 @@
 // Source: https://doc.rust-lang.org/src/alloc/vec/mod.rs.html
 
-use core::hash::{Hash, Hasher};
 use std::{
     collections::TryReserveError,
+    hash::{Hash, Hasher},
     ops::{Deref, DerefMut, Index, IndexMut, RangeBounds},
-    slice::SliceIndex,
+    slice::{self, IterMut, SliceIndex},
     vec::Drain,
 };
 
@@ -1167,25 +1167,23 @@ impl<T> FromIterator<T> for Vec<T> {
 //     }
 // }
 
-// #[stable(feature = "rust1", since = "1.0.0")]
-// impl<'a, T, A: Allocator> IntoIterator for &'a Vec<T, A> {
-//     type Item = &'a T;
-//     type IntoIter = slice::Iter<'a, T>;
+impl<'a, T> IntoIterator for &'a Vec<T> {
+    type Item = &'a T;
+    type IntoIter = slice::Iter<'a, T>;
 
-//     fn into_iter(self) -> slice::Iter<'a, T> {
-//         self.iter()
-//     }
-// }
+    fn into_iter(self) -> slice::Iter<'a, T> {
+        self.base.iter()
+    }
+}
 
-// #[stable(feature = "rust1", since = "1.0.0")]
-// impl<'a, T, A: Allocator> IntoIterator for &'a mut Vec<T, A> {
-//     type Item = &'a mut T;
-//     type IntoIter = slice::IterMut<'a, T>;
+impl<'a, T> IntoIterator for &'a mut Vec<T> {
+    type Item = &'a mut T;
+    type IntoIter = IterMut<'a, T>;
 
-//     fn into_iter(self) -> slice::IterMut<'a, T> {
-//         self.iter_mut()
-//     }
-// }
+    fn into_iter(self) -> IterMut<'a, T> {
+        self.base.iter_mut()
+    }
+}
 
 impl<T> Extend<T> for Vec<T> {
     #[inline]
