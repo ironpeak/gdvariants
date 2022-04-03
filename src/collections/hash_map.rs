@@ -74,7 +74,7 @@ use gdnative::{
 /// # Examples
 ///
 /// ```
-/// use std::collections::HashMap;
+/// use gdvariants::collections::HashMap;
 ///
 /// // Type inference lets us omit an explicit type signature (which
 /// // would be `HashMap<String, String>` in this example).
@@ -130,7 +130,7 @@ use gdnative::{
 /// A `HashMap` with a known list of items can be initialized from an array:
 ///
 /// ```
-/// use std::collections::HashMap;
+/// use gdvariants::collections::HashMap;
 ///
 /// let solar_distance = HashMap::from([
 ///     ("Mercury", 0.4),
@@ -145,7 +145,7 @@ use gdnative::{
 /// their values:
 ///
 /// ```
-/// use std::collections::HashMap;
+/// use gdvariants::collections::HashMap;
 ///
 /// // type inference lets us omit an explicit type signature (which
 /// // would be `HashMap<&str, u8>` in this example).
@@ -179,7 +179,7 @@ use gdnative::{
 /// [`with_capacity_and_hasher`]: Self::with_capacity_and_hasher
 ///
 /// ```
-/// use std::collections::HashMap;
+/// use gdvariants::collections::HashMap;
 ///
 /// #[derive(Hash, Eq, PartialEq, Debug)]
 /// struct Viking {
@@ -252,7 +252,7 @@ impl<K, V> HashMap<K, V, RandomState> {
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashMap;
+    /// use gdvariants::collections::HashMap;
     /// let mut map: HashMap<&str, i32> = HashMap::new();
     /// ```
     #[inline]
@@ -271,7 +271,7 @@ impl<K, V> HashMap<K, V, RandomState> {
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashMap;
+    /// use gdvariants::collections::HashMap;
     /// let mut map: HashMap<&str, i32> = HashMap::with_capacity(10);
     /// ```
     #[inline]
@@ -300,7 +300,7 @@ impl<K, V, S> HashMap<K, V, S> {
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashMap;
+    /// use gdvariants::collections::HashMap;
     /// use std::collections::hash_map::RandomState;
     ///
     /// let s = RandomState::new();
@@ -331,7 +331,7 @@ impl<K, V, S> HashMap<K, V, S> {
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashMap;
+    /// use gdvariants::collections::HashMap;
     /// use std::collections::hash_map::RandomState;
     ///
     /// let s = RandomState::new();
@@ -353,7 +353,7 @@ impl<K, V, S> HashMap<K, V, S> {
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashMap;
+    /// use gdvariants::collections::HashMap;
     /// let map: HashMap<i32, i32> = HashMap::with_capacity(100);
     /// assert!(map.capacity() >= 100);
     /// ```
@@ -368,7 +368,7 @@ impl<K, V, S> HashMap<K, V, S> {
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashMap;
+    /// use gdvariants::collections::HashMap;
     ///
     /// let map = HashMap::from([
     ///     ("a", 1),
@@ -392,7 +392,7 @@ impl<K, V, S> HashMap<K, V, S> {
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashMap;
+    /// use gdvariants::collections::HashMap;
     ///
     /// let map = HashMap::from([
     ///     ("a", 1),
@@ -417,7 +417,7 @@ impl<K, V, S> HashMap<K, V, S> {
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashMap;
+    /// use gdvariants::collections::HashMap;
     ///
     /// let map = HashMap::from([
     ///     ("a", 1),
@@ -440,7 +440,7 @@ impl<K, V, S> HashMap<K, V, S> {
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashMap;
+    /// use gdvariants::collections::HashMap;
     ///
     /// let mut map = HashMap::from([
     ///     ("a", 1),
@@ -468,7 +468,7 @@ impl<K, V, S> HashMap<K, V, S> {
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashMap;
+    /// use gdvariants::collections::HashMap;
     ///
     /// let map = HashMap::from([
     ///     ("a", 1),
@@ -493,7 +493,7 @@ impl<K, V, S> HashMap<K, V, S> {
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashMap;
+    /// use gdvariants::collections::HashMap;
     ///
     /// let map = HashMap::from([
     ///     ("a", 1),
@@ -517,7 +517,7 @@ impl<K, V, S> HashMap<K, V, S> {
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashMap;
+    /// use gdvariants::collections::HashMap;
     ///
     /// let mut map = HashMap::from([
     ///     ("a", 1),
@@ -544,7 +544,7 @@ impl<K, V, S> HashMap<K, V, S> {
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashMap;
+    /// use gdvariants::collections::HashMap;
     ///
     /// let mut a = HashMap::new();
     /// assert_eq!(a.len(), 0);
@@ -561,7 +561,7 @@ impl<K, V, S> HashMap<K, V, S> {
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashMap;
+    /// use gdvariants::collections::HashMap;
     ///
     /// let mut a = HashMap::new();
     /// assert!(a.is_empty());
@@ -579,7 +579,7 @@ impl<K, V, S> HashMap<K, V, S> {
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashMap;
+    /// use gdvariants::collections::HashMap;
     ///
     /// let mut a = HashMap::new();
     /// a.insert(1, "a");
@@ -605,7 +605,7 @@ impl<K, V, S> HashMap<K, V, S> {
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashMap;
+    /// use gdvariants::collections::HashMap;
     ///
     /// let mut map: HashMap<i32, i32> = (0..8).map(|x| (x, x*10)).collect();
     /// map.retain(|&k, _| k % 2 == 0);
@@ -625,7 +625,7 @@ impl<K, V, S> HashMap<K, V, S> {
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashMap;
+    /// use gdvariants::collections::HashMap;
     ///
     /// let mut a = HashMap::new();
     /// a.insert(1, "a");
@@ -642,7 +642,7 @@ impl<K, V, S> HashMap<K, V, S> {
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashMap;
+    /// use gdvariants::collections::HashMap;
     /// use std::collections::hash_map::RandomState;
     ///
     /// let hasher = RandomState::new();
@@ -671,7 +671,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashMap;
+    /// use gdvariants::collections::HashMap;
     /// let mut map: HashMap<&str, i32> = HashMap::new();
     /// map.reserve(10);
     /// ```
@@ -692,7 +692,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashMap;
+    /// use gdvariants::collections::HashMap;
     ///
     /// let mut map: HashMap<&str, isize> = HashMap::new();
     /// map.try_reserve(10).expect("why is the test harness OOMing on 10 bytes?");
@@ -709,7 +709,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashMap;
+    /// use gdvariants::collections::HashMap;
     ///
     /// let mut map: HashMap<i32, i32> = HashMap::with_capacity(100);
     /// map.insert(1, 2);
@@ -732,7 +732,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashMap;
+    /// use gdvariants::collections::HashMap;
     ///
     /// let mut map: HashMap<i32, i32> = HashMap::with_capacity(100);
     /// map.insert(1, 2);
@@ -753,7 +753,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashMap;
+    /// use gdvariants::collections::HashMap;
     ///
     /// let mut letters = HashMap::new();
     ///
@@ -781,7 +781,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashMap;
+    /// use gdvariants::collections::HashMap;
     ///
     /// let mut map = HashMap::new();
     /// map.insert(1, "a");
@@ -806,7 +806,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashMap;
+    /// use gdvariants::collections::HashMap;
     ///
     /// let mut map = HashMap::new();
     /// map.insert(1, "a");
@@ -831,7 +831,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashMap;
+    /// use gdvariants::collections::HashMap;
     ///
     /// let mut map = HashMap::new();
     /// map.insert(1, "a");
@@ -856,7 +856,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashMap;
+    /// use gdvariants::collections::HashMap;
     ///
     /// let mut map = HashMap::new();
     /// map.insert(1, "a");
@@ -888,7 +888,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashMap;
+    /// use gdvariants::collections::HashMap;
     ///
     /// let mut map = HashMap::new();
     /// assert_eq!(map.insert(37, "a"), None);
@@ -913,7 +913,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashMap;
+    /// use gdvariants::collections::HashMap;
     ///
     /// let mut map = HashMap::new();
     /// map.insert(1, "a");
@@ -939,7 +939,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashMap;
+    /// use gdvariants::collections::HashMap;
     ///
     /// # fn main() {
     /// let mut map = HashMap::new();
@@ -1043,7 +1043,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashMap;
+    /// use gdvariants::collections::HashMap;
     ///
     /// let map1 = HashMap::from([(1, 2), (3, 4)]);
     /// let map2: HashMap<_, _> = [(1, 2), (3, 4)].into();
@@ -1085,7 +1085,7 @@ impl<K, V, S> IntoIterator for HashMap<K, V, S> {
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashMap;
+    /// use gdvariants::collections::HashMap;
     ///
     /// let map = HashMap::from([
     ///     ("a", 1),
