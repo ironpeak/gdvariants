@@ -1,6 +1,10 @@
 // Source: https://doc.rust-lang.org/src/alloc/vec/mod.rs.html
 
-use std::{collections::TryReserveError, ops::RangeBounds, vec::Drain};
+use std::{
+    collections::TryReserveError,
+    ops::{self, Deref, DerefMut, RangeBounds},
+    vec::Drain,
+};
 
 pub struct Vec<T> {
     base: std::vec::Vec<T>,
@@ -1046,150 +1050,34 @@ impl<T: PartialEq> Vec<T> {
 }
 
 // ////////////////////////////////////////////////////////////////////////////////
-// // Internal methods and functions
-// ////////////////////////////////////////////////////////////////////////////////
-
-// #[doc(hidden)]
-// #[cfg(not(no_global_oom_handling))]
-// #[stable(feature = "rust1", since = "1.0.0")]
-// pub fn from_elem<T: Clone>(elem: T, n: usize) -> Vec<T> {
-//     <T as SpecFromElem>::from_elem(elem, n, Global)
-// }
-
-// #[doc(hidden)]
-// #[cfg(not(no_global_oom_handling))]
-// #[unstable(feature = "allocator_api", issue = "32838")]
-// pub fn from_elem_in<T: Clone, A: Allocator>(elem: T, n: usize, alloc: A) -> Vec<T, A> {
-//     <T as SpecFromElem>::from_elem(elem, n, alloc)
-// }
-
-// trait ExtendFromWithinSpec {
-//     /// # Safety
-//     ///
-//     /// - `src` needs to be valid index
-//     /// - `self.capacity() - self.len()` must be `>= src.len()`
-//     unsafe fn spec_extend_from_within(&mut self, src: Range<usize>);
-// }
-
-// impl<T: Clone, A: Allocator> ExtendFromWithinSpec for Vec<T, A> {
-//     default unsafe fn spec_extend_from_within(&mut self, src: Range<usize>) {
-//         // SAFETY:
-//         // - len is increased only after initializing elements
-//         let (this, spare, len) = unsafe { self.split_at_spare_mut_with_len() };
-
-//         // SAFETY:
-//         // - caller guaratees that src is a valid index
-//         let to_clone = unsafe { this.get_unchecked(src) };
-
-//         iter::zip(to_clone, spare)
-//             .map(|(src, dst)| dst.write(src.clone()))
-//             // Note:
-//             // - Element was just initialized with `MaybeUninit::write`, so it's ok to increase len
-//             // - len is increased after each element to prevent leaks (see issue #82533)
-//             .for_each(|_| *len += 1);
-//     }
-// }
-
-// impl<T: Copy, A: Allocator> ExtendFromWithinSpec for Vec<T, A> {
-//     unsafe fn spec_extend_from_within(&mut self, src: Range<usize>) {
-//         let count = src.len();
-//         {
-//             let (init, spare) = self.split_at_spare_mut();
-
-//             // SAFETY:
-//             // - caller guaratees that `src` is a valid index
-//             let source = unsafe { init.get_unchecked(src) };
-
-//             // SAFETY:
-//             // - Both pointers are created from unique slice references (`&mut [_]`)
-//             //   so they are valid and do not overlap.
-//             // - Elements are :Copy so it's OK to to copy them, without doing
-//             //   anything with the original values
-//             // - `count` is equal to the len of `source`, so source is valid for
-//             //   `count` reads
-//             // - `.reserve(count)` guarantees that `spare.len() >= count` so spare
-//             //   is valid for `count` writes
-//             unsafe { ptr::copy_nonoverlapping(source.as_ptr(), spare.as_mut_ptr() as _, count) };
-//         }
-
-//         // SAFETY:
-//         // - The elements were just initialized by `copy_nonoverlapping`
-//         self.len += count;
-//     }
-// }
-
-// ////////////////////////////////////////////////////////////////////////////////
 // // Common trait implementations for Vec
 // ////////////////////////////////////////////////////////////////////////////////
 
-// #[stable(feature = "rust1", since = "1.0.0")]
-// impl<T, A: Allocator> ops::Deref for Vec<T, A> {
-//     type Target = [T];
+impl<T> Deref for Vec<T> {
+    type Target = [T];
 
-//     fn deref(&self) -> &[T] {
-//         unsafe { slice::from_raw_parts(self.as_ptr(), self.len) }
-//     }
-// }
+    fn deref(&self) -> &[T] {
+        self.base.deref()
+    }
+}
 
-// #[stable(feature = "rust1", since = "1.0.0")]
-// impl<T, A: Allocator> ops::DerefMut for Vec<T, A> {
-//     fn deref_mut(&mut self) -> &mut [T] {
-//         unsafe { slice::from_raw_parts_mut(self.as_mut_ptr(), self.len) }
-//     }
-// }
+impl<T> DerefMut for Vec<T> {
+    fn deref_mut(&mut self) -> &mut [T] {
+        self.base.deref_mut()
+    }
+}
 
-// #[cfg(not(no_global_oom_handling))]
-// trait SpecCloneFrom {
-//     fn clone_from(this: &mut Self, other: &Self);
-// }
+impl<T: Clone> Clone for Vec<T> {
+    fn clone(&self) -> Self {
+        Vec {
+            base: self.base.clone(),
+        }
+    }
 
-// #[cfg(not(no_global_oom_handling))]
-// impl<T: Clone, A: Allocator> SpecCloneFrom for Vec<T, A> {
-//     default fn clone_from(this: &mut Self, other: &Self) {
-//         // drop anything that will not be overwritten
-//         this.truncate(other.len());
-
-//         // self.len <= other.len due to the truncate above, so the
-//         // slices here are always in-bounds.
-//         let (init, tail) = other.split_at(this.len());
-
-//         // reuse the contained values' allocations/resources.
-//         this.clone_from_slice(init);
-//         this.extend_from_slice(tail);
-//     }
-// }
-
-// #[cfg(not(no_global_oom_handling))]
-// impl<T: Copy, A: Allocator> SpecCloneFrom for Vec<T, A> {
-//     fn clone_from(this: &mut Self, other: &Self) {
-//         this.clear();
-//         this.extend_from_slice(other);
-//     }
-// }
-
-// #[cfg(not(no_global_oom_handling))]
-// #[stable(feature = "rust1", since = "1.0.0")]
-// impl<T: Clone, A: Allocator + Clone> Clone for Vec<T, A> {
-//     #[cfg(not(test))]
-//     fn clone(&self) -> Self {
-//         let alloc = self.allocator().clone();
-//         <[T]>::to_vec_in(&**self, alloc)
-//     }
-
-//     // HACK(japaric): with cfg(test) the inherent `[T]::to_vec` method, which is
-//     // required for this method definition, is not available. Instead use the
-//     // `slice::to_vec`  function which is only available with cfg(test)
-//     // NB see the slice::hack module in slice.rs for more information
-//     #[cfg(test)]
-//     fn clone(&self) -> Self {
-//         let alloc = self.allocator().clone();
-//         crate::slice::to_vec(&**self, alloc)
-//     }
-
-//     fn clone_from(&mut self, other: &Self) {
-//         SpecCloneFrom::clone_from(self, other)
-//     }
-// }
+    fn clone_from(&mut self, other: &Self) {
+        self.base.clone_from(&other.base)
+    }
+}
 
 // /// The hash of a vector is the same as that of the corresponding slice,
 // /// as required by the `core::borrow::Borrow` implementation.
