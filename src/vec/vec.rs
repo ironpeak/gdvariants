@@ -1,8 +1,10 @@
 // Source: https://doc.rust-lang.org/src/alloc/vec/mod.rs.html
 
+use core::hash::{Hash, Hasher};
 use std::{
     collections::TryReserveError,
-    ops::{self, Deref, DerefMut, RangeBounds},
+    ops::{Deref, DerefMut, Index, IndexMut, RangeBounds},
+    slice::SliceIndex,
     vec::Drain,
 };
 
@@ -1079,60 +1081,49 @@ impl<T: Clone> Clone for Vec<T> {
     }
 }
 
-// /// The hash of a vector is the same as that of the corresponding slice,
-// /// as required by the `core::borrow::Borrow` implementation.
-// ///
-// /// ```
-// /// #![feature(build_hasher_simple_hash_one)]
-// /// use std::hash::BuildHasher;
-// ///
-// /// let b = std::collections::hash_map::RandomState::new();
-// /// let v: Vec<u8> = vec![0xa8, 0x3c, 0x09];
-// /// let s: &[u8] = &[0xa8, 0x3c, 0x09];
-// /// assert_eq!(b.hash_one(v), b.hash_one(s));
-// /// ```
-// #[stable(feature = "rust1", since = "1.0.0")]
-// impl<T: Hash, A: Allocator> Hash for Vec<T, A> {
-//     #[inline]
-//     fn hash<H: Hasher>(&self, state: &mut H) {
-//         Hash::hash(&**self, state)
-//     }
-// }
+/// The hash of a vector is the same as that of the corresponding slice,
+/// as required by the `core::borrow::Borrow` implementation.
+///
+/// ```
+/// #![feature(build_hasher_simple_hash_one)]
+/// use std::hash::BuildHasher;
+///
+/// let b = std::collections::hash_map::RandomState::new();
+/// let v: Vec<u8> = vec![0xa8, 0x3c, 0x09];
+/// let s: &[u8] = &[0xa8, 0x3c, 0x09];
+/// assert_eq!(b.hash_one(v), b.hash_one(s));
+/// ```
+impl<T: Hash> Hash for Vec<T> {
+    #[inline]
+    fn hash<H: Hasher>(&self, state: &mut H) {
+        self.base.hash(state)
+    }
+}
 
-// #[stable(feature = "rust1", since = "1.0.0")]
-// #[rustc_on_unimplemented(
-//     message = "vector indices are of type `usize` or ranges of `usize`",
-//     label = "vector indices are of type `usize` or ranges of `usize`"
-// )]
-// impl<T, I: SliceIndex<[T]>, A: Allocator> Index<I> for Vec<T, A> {
-//     type Output = I::Output;
+impl<T, I: SliceIndex<[T]>> Index<I> for Vec<T> {
+    type Output = I::Output;
 
-//     #[inline]
-//     fn index(&self, index: I) -> &Self::Output {
-//         Index::index(&**self, index)
-//     }
-// }
+    #[inline]
+    fn index(&self, index: I) -> &Self::Output {
+        self.base.index(index)
+    }
+}
 
-// #[stable(feature = "rust1", since = "1.0.0")]
-// #[rustc_on_unimplemented(
-//     message = "vector indices are of type `usize` or ranges of `usize`",
-//     label = "vector indices are of type `usize` or ranges of `usize`"
-// )]
-// impl<T, I: SliceIndex<[T]>, A: Allocator> IndexMut<I> for Vec<T, A> {
-//     #[inline]
-//     fn index_mut(&mut self, index: I) -> &mut Self::Output {
-//         IndexMut::index_mut(&mut **self, index)
-//     }
-// }
+impl<T, I: SliceIndex<[T]>> IndexMut<I> for Vec<T> {
+    #[inline]
+    fn index_mut(&mut self, index: I) -> &mut Self::Output {
+        self.base.index_mut(index)
+    }
+}
 
-// #[cfg(not(no_global_oom_handling))]
-// #[stable(feature = "rust1", since = "1.0.0")]
-// impl<T> FromIterator<T> for Vec<T> {
-//     #[inline]
-//     fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Vec<T> {
-//         <Self as SpecFromIter<T, I::IntoIter>>::from_iter(iter.into_iter())
-//     }
-// }
+impl<T> FromIterator<T> for Vec<T> {
+    #[inline]
+    fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Vec<T> {
+        let mut vec = Vec::new();
+        vec.extend(iter);
+        vec
+    }
+}
 
 // #[stable(feature = "rust1", since = "1.0.0")]
 // impl<T, A: Allocator> IntoIterator for Vec<T, A> {
@@ -1196,24 +1187,12 @@ impl<T: Clone> Clone for Vec<T> {
 //     }
 // }
 
-// #[cfg(not(no_global_oom_handling))]
-// #[stable(feature = "rust1", since = "1.0.0")]
-// impl<T, A: Allocator> Extend<T> for Vec<T, A> {
-//     #[inline]
-//     fn extend<I: IntoIterator<Item = T>>(&mut self, iter: I) {
-//         <Self as SpecExtend<T, I::IntoIter>>::spec_extend(self, iter.into_iter())
-//     }
-
-//     #[inline]
-//     fn extend_one(&mut self, item: T) {
-//         self.push(item);
-//     }
-
-//     #[inline]
-//     fn extend_reserve(&mut self, additional: usize) {
-//         self.reserve(additional);
-//     }
-// }
+impl<T> Extend<T> for Vec<T> {
+    #[inline]
+    fn extend<I: IntoIterator<Item = T>>(&mut self, iter: I) {
+        self.base.extend(iter)
+    }
+}
 
 // impl<T, A: Allocator> Vec<T, A> {
 //     // leaf method to which various SpecFrom/SpecExtend implementations delegate when
