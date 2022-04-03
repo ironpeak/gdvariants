@@ -944,184 +944,106 @@ impl<T> Vec<T> {
     }
 }
 
-// impl<T: Clone, A: Allocator> Vec<T, A> {
-//     /// Resizes the `Vec` in-place so that `len` is equal to `new_len`.
-//     ///
-//     /// If `new_len` is greater than `len`, the `Vec` is extended by the
-//     /// difference, with each additional slot filled with `value`.
-//     /// If `new_len` is less than `len`, the `Vec` is simply truncated.
-//     ///
-//     /// This method requires `T` to implement [`Clone`],
-//     /// in order to be able to clone the passed value.
-//     /// If you need more flexibility (or want to rely on [`Default`] instead of
-//     /// [`Clone`]), use [`Vec::resize_with`].
-//     /// If you only need to resize to a smaller size, use [`Vec::truncate`].
-//     ///
-//     /// # Examples
-//     ///
-//     /// ```
-//     /// let mut vec = vec!["hello"];
-//     /// vec.resize(3, "world");
-//     /// assert_eq!(vec, ["hello", "world", "world"]);
-//     ///
-//     /// let mut vec = vec![1, 2, 3, 4];
-//     /// vec.resize(2, 0);
-//     /// assert_eq!(vec, [1, 2]);
-//     /// ```
-//     #[cfg(not(no_global_oom_handling))]
-//     #[stable(feature = "vec_resize", since = "1.5.0")]
-//     pub fn resize(&mut self, new_len: usize, value: T) {
-//         let len = self.len();
+impl<T: Clone> Vec<T> {
+    /// Resizes the `Vec` in-place so that `len` is equal to `new_len`.
+    ///
+    /// If `new_len` is greater than `len`, the `Vec` is extended by the
+    /// difference, with each additional slot filled with `value`.
+    /// If `new_len` is less than `len`, the `Vec` is simply truncated.
+    ///
+    /// This method requires `T` to implement [`Clone`],
+    /// in order to be able to clone the passed value.
+    /// If you need more flexibility (or want to rely on [`Default`] instead of
+    /// [`Clone`]), use [`Vec::resize_with`].
+    /// If you only need to resize to a smaller size, use [`Vec::truncate`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let mut vec = vec!["hello"];
+    /// vec.resize(3, "world");
+    /// assert_eq!(vec, ["hello", "world", "world"]);
+    ///
+    /// let mut vec = vec![1, 2, 3, 4];
+    /// vec.resize(2, 0);
+    /// assert_eq!(vec, [1, 2]);
+    /// ```
+    pub fn resize(&mut self, new_len: usize, value: T) {
+        self.base.resize(new_len, value)
+    }
 
-//         if new_len > len {
-//             self.extend_with(new_len - len, ExtendElement(value))
-//         } else {
-//             self.truncate(new_len);
-//         }
-//     }
+    /// Clones and appends all elements in a slice to the `Vec`.
+    ///
+    /// Iterates over the slice `other`, clones each element, and then appends
+    /// it to this `Vec`. The `other` slice is traversed in-order.
+    ///
+    /// Note that this function is same as [`extend`] except that it is
+    /// specialized to work with slices instead. If and when Rust gets
+    /// specialization this function will likely be deprecated (but still
+    /// available).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let mut vec = vec![1];
+    /// vec.extend_from_slice(&[2, 3, 4]);
+    /// assert_eq!(vec, [1, 2, 3, 4]);
+    /// ```
+    ///
+    /// [`extend`]: Vec::extend
+    pub fn extend_from_slice(&mut self, other: &[T]) {
+        self.base.extend_from_slice(other)
+    }
 
-//     /// Clones and appends all elements in a slice to the `Vec`.
-//     ///
-//     /// Iterates over the slice `other`, clones each element, and then appends
-//     /// it to this `Vec`. The `other` slice is traversed in-order.
-//     ///
-//     /// Note that this function is same as [`extend`] except that it is
-//     /// specialized to work with slices instead. If and when Rust gets
-//     /// specialization this function will likely be deprecated (but still
-//     /// available).
-//     ///
-//     /// # Examples
-//     ///
-//     /// ```
-//     /// let mut vec = vec![1];
-//     /// vec.extend_from_slice(&[2, 3, 4]);
-//     /// assert_eq!(vec, [1, 2, 3, 4]);
-//     /// ```
-//     ///
-//     /// [`extend`]: Vec::extend
-//     #[cfg(not(no_global_oom_handling))]
-//     #[stable(feature = "vec_extend_from_slice", since = "1.6.0")]
-//     pub fn extend_from_slice(&mut self, other: &[T]) {
-//         self.spec_extend(other.iter())
-//     }
+    /// Copies elements from `src` range to the end of the vector.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the starting point is greater than the end point or if
+    /// the end point is greater than the length of the vector.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let mut vec = vec![0, 1, 2, 3, 4];
+    ///
+    /// vec.extend_from_within(2..);
+    /// assert_eq!(vec, [0, 1, 2, 3, 4, 2, 3, 4]);
+    ///
+    /// vec.extend_from_within(..2);
+    /// assert_eq!(vec, [0, 1, 2, 3, 4, 2, 3, 4, 0, 1]);
+    ///
+    /// vec.extend_from_within(4..8);
+    /// assert_eq!(vec, [0, 1, 2, 3, 4, 2, 3, 4, 0, 1, 4, 2, 3, 4]);
+    /// ```
+    pub fn extend_from_within<R>(&mut self, src: R)
+    where
+        R: RangeBounds<usize>,
+    {
+        self.base.extend_from_within(src)
+    }
+}
 
-//     /// Copies elements from `src` range to the end of the vector.
-//     ///
-//     /// # Panics
-//     ///
-//     /// Panics if the starting point is greater than the end point or if
-//     /// the end point is greater than the length of the vector.
-//     ///
-//     /// # Examples
-//     ///
-//     /// ```
-//     /// let mut vec = vec![0, 1, 2, 3, 4];
-//     ///
-//     /// vec.extend_from_within(2..);
-//     /// assert_eq!(vec, [0, 1, 2, 3, 4, 2, 3, 4]);
-//     ///
-//     /// vec.extend_from_within(..2);
-//     /// assert_eq!(vec, [0, 1, 2, 3, 4, 2, 3, 4, 0, 1]);
-//     ///
-//     /// vec.extend_from_within(4..8);
-//     /// assert_eq!(vec, [0, 1, 2, 3, 4, 2, 3, 4, 0, 1, 4, 2, 3, 4]);
-//     /// ```
-//     #[cfg(not(no_global_oom_handling))]
-//     #[stable(feature = "vec_extend_from_within", since = "1.53.0")]
-//     pub fn extend_from_within<R>(&mut self, src: R)
-//     where
-//         R: RangeBounds<usize>,
-//     {
-//         let range = slice::range(src, ..self.len());
-//         self.reserve(range.len());
-
-//         // SAFETY:
-//         // - `slice::range` guarantees  that the given range is valid for indexing self
-//         unsafe {
-//             self.spec_extend_from_within(range);
-//         }
-//     }
-// }
-
-// // This code generalizes `extend_with_{element,default}`.
-// trait ExtendWith<T> {
-//     fn next(&mut self) -> T;
-//     fn last(self) -> T;
-// }
-
-// struct ExtendElement<T>(T);
-// impl<T: Clone> ExtendWith<T> for ExtendElement<T> {
-//     fn next(&mut self) -> T {
-//         self.0.clone()
-//     }
-//     fn last(self) -> T {
-//         self.0
-//     }
-// }
-
-// struct ExtendFunc<F>(F);
-// impl<T, F: FnMut() -> T> ExtendWith<T> for ExtendFunc<F> {
-//     fn next(&mut self) -> T {
-//         (self.0)()
-//     }
-//     fn last(mut self) -> T {
-//         (self.0)()
-//     }
-// }
-
-// impl<T, A: Allocator> Vec<T, A> {
-//     #[cfg(not(no_global_oom_handling))]
-//     /// Extend the vector by `n` values, using the given generator.
-//     fn extend_with<E: ExtendWith<T>>(&mut self, n: usize, mut value: E) {
-//         self.reserve(n);
-
-//         unsafe {
-//             let mut ptr = self.as_mut_ptr().add(self.len());
-//             // Use SetLenOnDrop to work around bug where compiler
-//             // might not realize the store through `ptr` through self.set_len()
-//             // don't alias.
-//             let mut local_len = SetLenOnDrop::new(&mut self.len);
-
-//             // Write all elements except the last one
-//             for _ in 1..n {
-//                 ptr::write(ptr, value.next());
-//                 ptr = ptr.offset(1);
-//                 // Increment the length in every step in case next() panics
-//                 local_len.increment_len(1);
-//             }
-
-//             if n > 0 {
-//                 // We can write the last element directly without cloning needlessly
-//                 ptr::write(ptr, value.last());
-//                 local_len.increment_len(1);
-//             }
-
-//             // len set by scope guard
-//         }
-//     }
-// }
-
-// impl<T: PartialEq, A: Allocator> Vec<T, A> {
-//     /// Removes consecutive repeated elements in the vector according to the
-//     /// [`PartialEq`] trait implementation.
-//     ///
-//     /// If the vector is sorted, this removes all duplicates.
-//     ///
-//     /// # Examples
-//     ///
-//     /// ```
-//     /// let mut vec = vec![1, 2, 2, 3, 2];
-//     ///
-//     /// vec.dedup();
-//     ///
-//     /// assert_eq!(vec, [1, 2, 3, 2]);
-//     /// ```
-//     #[stable(feature = "rust1", since = "1.0.0")]
-//     #[inline]
-//     pub fn dedup(&mut self) {
-//         self.dedup_by(|a, b| a == b)
-//     }
-// }
+impl<T: PartialEq> Vec<T> {
+    /// Removes consecutive repeated elements in the vector according to the
+    /// [`PartialEq`] trait implementation.
+    ///
+    /// If the vector is sorted, this removes all duplicates.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let mut vec = vec![1, 2, 2, 3, 2];
+    ///
+    /// vec.dedup();
+    ///
+    /// assert_eq!(vec, [1, 2, 3, 2]);
+    /// ```
+    #[inline]
+    pub fn dedup(&mut self) {
+        self.base.dedup()
+    }
+}
 
 // ////////////////////////////////////////////////////////////////////////////////
 // // Internal methods and functions
