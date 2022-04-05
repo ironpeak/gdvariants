@@ -1,6 +1,9 @@
 use clap::{Parser, Subcommand};
 
+use info::Info;
+
 mod info;
+mod source;
 
 #[derive(Debug, Parser)]
 #[clap(name = "check")]
@@ -14,9 +17,28 @@ enum Commands {
     /// List sources
     ListSources {},
     /// Get API for source
-    Api {},
-    /// Show differences between sources
-    Diff {},
+    GetApi { name: String, source: String },
+}
+
+fn get_doc_source<'a>(info: &'a Info, source: &str, name: &str) -> &'a str {
+    match source {
+        "source" => info
+            .sources
+            .iter()
+            .find(|x| x.name == name)
+            .unwrap()
+            .docs
+            .source
+            .as_str(),
+        "local" => info
+            .sources
+            .iter()
+            .find(|x| x.name == name)
+            .unwrap()
+            .docs
+            .local
+            .as_str(),
+    }
 }
 
 fn main() {
@@ -28,7 +50,10 @@ fn main() {
                 println!("{}", source.name);
             }
         }
-        Commands::Api {} => todo!(),
-        Commands::Diff {} => todo!(),
+        Commands::GetApi { name, source } => {
+            let info = info::get_info("./info.json");
+            let doc_source = get_doc_source(&info, &source, &name);
+            let source = source::get(&info.name, &source, doc_source);
+        }
     }
 }
