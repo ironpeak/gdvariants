@@ -1,5 +1,6 @@
 use clap::{Parser, Subcommand};
 
+use html_parser::Dom;
 use info::Info;
 
 mod info;
@@ -38,6 +39,7 @@ fn get_doc_source<'a>(info: &'a Info, source: &str, name: &str) -> &'a str {
             .docs
             .local
             .as_str(),
+        &_ => todo!(),
     }
 }
 
@@ -54,6 +56,8 @@ fn main() {
             let info = info::get_info("./info.json");
             let doc_source = get_doc_source(&info, &source, &name);
             let source = source::get(&info.name, &source, doc_source);
+            let json = Dom::parse(&source).unwrap().to_json_pretty().unwrap();
+            println!("{}", json);
         }
     }
 }
