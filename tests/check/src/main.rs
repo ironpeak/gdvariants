@@ -55,9 +55,10 @@ fn main() {
         Commands::GetApi { name, source } => {
             let info = info::get_info("./info.json");
             let doc_source = get_doc_source(&info, &source, &name);
-            let source = source::get(&info.name, &source, doc_source);
-            let json = Dom::parse(&source).unwrap().to_json_pretty().unwrap();
-            println!("{}", json);
+            let source_xml = source::get(&info.name, &source, doc_source);
+            let source_json = Dom::parse(&source_xml).unwrap().to_json().unwrap();
+            let docs = json::parse(&source_json).unwrap();
+            println!("{}", docs["children"].pretty(4));
         }
     }
 }
