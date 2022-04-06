@@ -5,6 +5,7 @@ use info::Info;
 
 mod info;
 mod source;
+mod struct_api;
 
 #[derive(Debug, Parser)]
 #[clap(name = "check")]
@@ -57,8 +58,8 @@ fn main() {
             let doc_source = get_doc_source(&info, &source, &name);
             let source_xml = source::get(&info.name, &source, doc_source);
             let source_json = Dom::parse(&source_xml).unwrap().to_json().unwrap();
-            let docs = json::parse(&source_json).unwrap();
-            println!("{}", docs["children"].pretty(4));
+            let json_value = json::parse(&source_json).unwrap();
+            let api = struct_api::StructApi::from_json(&json_value);
         }
     }
 }
