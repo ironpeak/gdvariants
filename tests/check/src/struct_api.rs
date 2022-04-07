@@ -146,20 +146,23 @@ fn get_with_id<'a>(json: &'a JsonValue, id: &str) -> &'a JsonValue {
     panic!("Could not find element with id {}", id);
 }
 
-fn get_text<'a>(json: &'a JsonValue) -> String {
+fn get_text<'a>(json: &'a JsonValue, ignore: &str) -> String {
+    if json["classes"].contains(ignore) {
+        return String::new();
+    }
     let text = if json.is_array() {
         let mut text = "".to_string();
         for member in json.members() {
             if member.is_string() {
                 text.push_str(format!(" {} ", member.as_str().unwrap()).as_str());
             } else {
-                text.push_str(format!(" {} ", &get_text(&member)).as_str());
+                text.push_str(format!(" {} ", &get_text(&member, ignore)).as_str());
             }
         }
         text
     } else {
         if json.has_key("children") {
-            get_text(&json["children"])
+            get_text(&json["children"], ignore)
         } else {
             String::new()
         }
@@ -168,29 +171,38 @@ fn get_text<'a>(json: &'a JsonValue) -> String {
 }
 
 fn get_name(main_content: &JsonValue) -> String {
-    let text = get_text(get_with_class(
-        &get_with_class(&main_content["children"], "fqn")["children"],
-        "in-band",
-    ));
+    let text = get_text(
+        get_with_class(
+            &find_with_class(&main_content["children"], "fqn").unwrap()["children"],
+            "in-band",
+        ),
+        "notable-traits",
+    );
     text.replace(" ", "")[6..].to_string()
 }
 
 fn get_declaration(main_content: &JsonValue) -> String {
-    let text = get_text(get_with_class(
-        &get_with_class(&main_content["children"], "item-decl")["children"],
-        "struct",
-    ));
+    let text = get_text(
+        get_with_class(
+            &get_with_class(&main_content["children"], "item-decl")["children"],
+            "struct",
+        ),
+        "notable-traits",
+    );
     prettify(&text)
 }
 
 fn get_implementation_header(implementation: &JsonValue) -> String {
-    let text = get_text(get_with_class(
-        &get_with_class(
-            &get(&implementation["children"], "name", "summary")["children"],
-            "impl",
-        )["children"],
-        "code-header",
-    ));
+    let text = get_text(
+        get_with_class(
+            &get_with_class(
+                &get(&implementation["children"], "name", "summary")["children"],
+                "impl",
+            )["children"],
+            "code-header",
+        ),
+        "notable-traits",
+    );
 
     prettify(&text)
 }
@@ -201,7 +213,7 @@ fn get_implementation_methods(implementation: &JsonValue) -> Vec<String> {
         get_with_class(&implementation["children"], "impl-items")["children"].members()
     {
         let method_element = &find_with_class(&method_container, "code-header").unwrap();
-        let method = get_text(&method_element);
+        let method = get_text(&method_element, "notable-traits");
         methods.push(prettify(&method));
     }
     methods
