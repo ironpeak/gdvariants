@@ -27,6 +27,16 @@ fn get_with_class<'a>(json: &'a JsonValue, class: &str) -> &'a JsonValue {
     panic!();
 }
 
+fn get_all_with_class<'a>(json: &'a JsonValue, class: &str) -> Vec<&'a JsonValue> {
+    let mut values = Vec::new();
+    for member in json.members() {
+        if member["classes"].contains(class) {
+            values.push(member);
+        }
+    }
+    values
+}
+
 fn get_with_id<'a>(json: &'a JsonValue, id: &str) -> &'a JsonValue {
     for member in json.members() {
         if member["id"] == id {
@@ -78,8 +88,26 @@ fn get_declaration(main_content: &JsonValue) -> String {
     text.to_string()
 }
 
+fn get_implementation_header(implementation: &JsonValue) -> String {
+    let text = get_text(get_with_class(
+        &get_with_class(
+            &get(&implementation["children"], "name", "summary")["children"],
+            "impl",
+        )["children"],
+        "code-header",
+    ));
+    text.to_string()
+}
+
 fn get_implementations(main_content: &JsonValue) -> Vec<HashMap<String, Vec<String>>> {
-    let implementations = Vec::new();
+    let mut implementations = Vec::new();
+
+    for implementation in get_all_with_class(&main_content["children"], "implementors-toggle") {
+        let implementation_header = get_implementation_header(implementation);
+        let mut result = HashMap::new();
+        result.insert(implementation_header, Vec::new());
+        implementations.push(result);
+    }
 
     implementations
 }
