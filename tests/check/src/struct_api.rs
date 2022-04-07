@@ -1,4 +1,4 @@
-use std::{collections::HashMap, fmt::Display, mem::replace};
+use std::{collections::HashMap, fmt::Display};
 
 use json::JsonValue;
 
@@ -10,19 +10,26 @@ pub struct StructApi {
 
 impl Display for StructApi {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        writeln!(f, "name: {}", self.name)?;
-        writeln!(f, "declaration: {}", self.declaration)?;
-        writeln!(f, "implementations: [")?;
+        writeln!(f, "{{")?;
+        writeln!(f, "  \"name\": \"{}\",", self.name)?;
+        writeln!(f, "  \"declaration\": \"{}\",", self.declaration)?;
+        write!(f, "  \"implementations\": {{")?;
+
+        let mut impl_delim = "";
         for implementation in &self.implementations {
-            for (implementation, methods) in implementation {
-                writeln!(f, "  {}: [", implementation)?;
+            for (key, methods) in implementation {
+                write!(f, "{}\n    \"{}\": [", impl_delim, key)?;
+                let mut method_delim = "";
                 for method in methods {
-                    writeln!(f, "    {}", method)?;
+                    write!(f, "{}\n      \"{}\"", method_delim, method)?;
+                    method_delim = ",";
                 }
-                writeln!(f, "  ]")?;
+                write!(f, "\n    ]")?;
+                impl_delim = ",";
             }
         }
-        writeln!(f, "]")
+        writeln!(f, "\n  }}")?;
+        writeln!(f, "}}")
     }
 }
 
@@ -123,8 +130,17 @@ fn get_implementation_header(implementation: &JsonValue) -> String {
             "impl",
         )["children"],
         "code-header",
-    ));
-    text.to_string()
+    ))
+    .replace(">where", "> where")
+    .replace(")where", ") where")
+    .replace("->", "-> ")
+    .replace("+", " + ")
+    .replace(":", ": ")
+    .replace(">", "> ")
+    .replace(",", ", ")
+    .trim()
+    .to_string();
+    remove_multiple_spaces(&text)
 }
 
 fn get_implementation_methods(implementation: &JsonValue) -> Vec<String> {
@@ -133,20 +149,23 @@ fn get_implementation_methods(implementation: &JsonValue) -> Vec<String> {
         &get_with_class(&implementation["children"], "impl-items")["children"],
         "method-toggle",
     ) {
-        let method = get_text(&get_with_class(
+        let method = remove_multiple_spaces(&get_text(&get_with_class(
             &get_with_class(
                 &get(&method["children"], "name", "summary")["children"],
                 "method",
             )["children"],
             "code-header",
-        ))
+        )))
         .replace("pub fn", "pub fn ")
         .replace(">where", "> where")
         .replace(")where", ") where")
         .replace("->", "-> ")
         .replace("+", " + ")
+        .replace("( ", "(")
         .replace(":", ": ")
-        .replace("\n", "");
+        .replace("\n", "")
+        .trim()
+        .to_string();
         methods.push(remove_multiple_spaces(&method));
     }
     methods
