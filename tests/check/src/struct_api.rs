@@ -1,12 +1,29 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, fmt::Display};
 
 use json::JsonValue;
 
-#[derive(Debug)]
 pub struct StructApi {
     name: String,
     declaration: String,
     implementations: Vec<HashMap<String, Vec<String>>>,
+}
+
+impl Display for StructApi {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        writeln!(f, "name: {}", self.name)?;
+        writeln!(f, "declaration: {}", self.declaration)?;
+        writeln!(f, "implementations: [")?;
+        for implementation in &self.implementations {
+            for (implementation, methods) in implementation {
+                writeln!(f, "  {}: [", implementation)?;
+                for method in methods {
+                    writeln!(f, "    {}", method)?;
+                }
+                writeln!(f, "  ]")?;
+            }
+        }
+        writeln!(f, "]")
+    }
 }
 
 fn get<'a>(json: &'a JsonValue, key: &str, value: &str) -> &'a JsonValue {
@@ -99,13 +116,28 @@ fn get_implementation_header(implementation: &JsonValue) -> String {
     text.to_string()
 }
 
+fn get_implementation_methods(implementation: &JsonValue) -> Vec<String> {
+    let mut methods = Vec::new();
+    for method in get_all_with_class(
+        &get_with_class(&implementation["children"], "impl-items")["children"],
+        "method-toggle",
+    ) {
+        let method = get_text(get(&method["children"], "name", "summary"));
+        methods.push(method);
+    }
+    methods
+}
+
 fn get_implementations(main_content: &JsonValue) -> Vec<HashMap<String, Vec<String>>> {
     let mut implementations = Vec::new();
 
     for implementation in get_all_with_class(&main_content["children"], "implementors-toggle") {
         let implementation_header = get_implementation_header(implementation);
         let mut result = HashMap::new();
-        result.insert(implementation_header, Vec::new());
+
+        let methods = get_implementation_methods(implementation);
+
+        result.insert(implementation_header, methods);
         implementations.push(result);
     }
 
