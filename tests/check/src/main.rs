@@ -60,6 +60,7 @@ fn main() {
             let source_json = Dom::parse(&source_xml).unwrap().to_json().unwrap();
             let json_value = json::parse(&source_json).unwrap();
             let api = struct_api::StructApi::from_json(&json_value);
+            println!("{:?}", api);
         }
     }
 }

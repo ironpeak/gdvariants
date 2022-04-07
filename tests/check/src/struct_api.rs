@@ -1,7 +1,12 @@
+use std::collections::HashMap;
+
 use json::JsonValue;
 
+#[derive(Debug)]
 pub struct StructApi {
     name: String,
+    declaration: String,
+    implementations: Vec<HashMap<String, Vec<String>>>,
 }
 
 fn get<'a>(json: &'a JsonValue, key: &str, value: &str) -> &'a JsonValue {
@@ -10,7 +15,7 @@ fn get<'a>(json: &'a JsonValue, key: &str, value: &str) -> &'a JsonValue {
             return member;
         }
     }
-    todo!();
+    panic!();
 }
 
 fn get_with_class<'a>(json: &'a JsonValue, class: &str) -> &'a JsonValue {
@@ -19,7 +24,7 @@ fn get_with_class<'a>(json: &'a JsonValue, class: &str) -> &'a JsonValue {
             return member;
         }
     }
-    todo!();
+    panic!();
 }
 
 fn get_with_id<'a>(json: &'a JsonValue, id: &str) -> &'a JsonValue {
@@ -28,11 +33,11 @@ fn get_with_id<'a>(json: &'a JsonValue, id: &str) -> &'a JsonValue {
             return member;
         }
     }
-    todo!();
+    panic!();
 }
 
 fn get_text<'a>(json: &'a JsonValue) -> String {
-    if json.is_array() {
+    let text = if json.is_array() {
         let mut text = "".to_string();
         for member in json.members() {
             if member.is_string() {
@@ -41,14 +46,20 @@ fn get_text<'a>(json: &'a JsonValue) -> String {
                 text.push_str(&get_text(&member));
             }
         }
-        return text;
+        text
     } else {
         if json.has_key("children") {
-            return get_text(&json["children"]);
+            get_text(&json["children"])
         } else {
-            return String::new();
+            String::new()
         }
-    }
+    };
+    text.replace("&nbsp;", " ")
+        .replace("&quot;", "\"")
+        .replace("&amp;", "&")
+        .replace("&lt;", "<")
+        .replace("&gt;", ">")
+        .replace("&#39;", "'")
 }
 
 fn get_name(main_content: &JsonValue) -> String {
@@ -57,6 +68,20 @@ fn get_name(main_content: &JsonValue) -> String {
         "in-band",
     ));
     text[6..].to_string()
+}
+
+fn get_declaration(main_content: &JsonValue) -> String {
+    let text = get_text(get_with_class(
+        &get_with_class(&main_content["children"], "item-decl")["children"],
+        "struct",
+    ));
+    text.to_string()
+}
+
+fn get_implementations(main_content: &JsonValue) -> Vec<HashMap<String, Vec<String>>> {
+    let implementations = Vec::new();
+
+    implementations
 }
 
 impl StructApi {
@@ -68,7 +93,13 @@ impl StructApi {
         let main_content = get_with_id(&div_width_limiter["children"], "main-content");
 
         let name = get_name(main_content);
+        let declaration = get_declaration(main_content);
+        let implementations = get_implementations(main_content);
 
-        return StructApi { name: name };
+        return StructApi {
+            name: name,
+            declaration: declaration,
+            implementations: implementations,
+        };
     }
 }
