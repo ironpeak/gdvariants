@@ -26,6 +26,17 @@ impl Display for StructApi {
     }
 }
 
+fn remove_multiple_spaces(str: &str) -> String {
+    let mut previous = str.to_string();
+    loop {
+        let current = previous.replace("  ", " ");
+        if current == previous {
+            return current;
+        }
+        previous = current;
+    }
+}
+
 fn get<'a>(json: &'a JsonValue, key: &str, value: &str) -> &'a JsonValue {
     for member in json.members() {
         if member[key] == value {
@@ -131,9 +142,12 @@ fn get_implementation_methods(implementation: &JsonValue) -> Vec<String> {
         ))
         .replace("pub fn", "pub fn ")
         .replace(">where", "> where")
+        .replace(")where", ") where")
         .replace("->", "-> ")
+        .replace("+", " + ")
+        .replace(":", ": ")
         .replace("\n", "");
-        methods.push(method);
+        methods.push(remove_multiple_spaces(&method));
     }
     methods
 }
