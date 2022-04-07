@@ -1,4 +1,4 @@
-use std::{collections::HashMap, fmt::Display};
+use std::{collections::HashMap, fmt::Display, mem::replace};
 
 use json::JsonValue;
 
@@ -122,7 +122,17 @@ fn get_implementation_methods(implementation: &JsonValue) -> Vec<String> {
         &get_with_class(&implementation["children"], "impl-items")["children"],
         "method-toggle",
     ) {
-        let method = get_text(get(&method["children"], "name", "summary"));
+        let method = get_text(&get_with_class(
+            &get_with_class(
+                &get(&method["children"], "name", "summary")["children"],
+                "method",
+            )["children"],
+            "code-header",
+        ))
+        .replace("pub fn", "pub fn ")
+        .replace(">where", "> where")
+        .replace("->", "-> ")
+        .replace("\n", "");
         methods.push(method);
     }
     methods
