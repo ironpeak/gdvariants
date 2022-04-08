@@ -19,7 +19,7 @@ pub struct Source {
 #[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Docs {
-    pub source: String,
+    pub std: String,
     pub local: String,
 }
 

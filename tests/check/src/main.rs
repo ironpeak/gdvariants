@@ -24,13 +24,13 @@ enum Commands {
 
 fn get_doc_source<'a>(info: &'a Info, source: &str, name: &str) -> &'a str {
     match source {
-        "source" => info
+        "std" => info
             .sources
             .iter()
             .find(|x| x.name == name)
             .unwrap()
             .docs
-            .source
+            .std
             .as_str(),
         "local" => info
             .sources

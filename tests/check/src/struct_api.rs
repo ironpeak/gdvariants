@@ -127,6 +127,26 @@ fn find_with_class<'a>(json: &'a JsonValue, class: &str) -> Option<&'a JsonValue
     None
 }
 
+fn contains_class<'a>(json: &'a JsonValue, class: &str) -> bool {
+    if json.is_array() {
+        for member in json.members() {
+            match contains_class(member, class) {
+                true => return true,
+                false => continue,
+            }
+        }
+    } else {
+        if json["classes"].contains(class) {
+            return true;
+        }
+        if json.has_key("children") {
+            return contains_class(&json["children"], class);
+        }
+    }
+
+    false
+}
+
 fn get_all_with_class<'a>(json: &'a JsonValue, class: &str) -> Vec<&'a JsonValue> {
     let mut values = Vec::new();
     for member in json.members() {
@@ -212,6 +232,9 @@ fn get_implementation_methods(implementation: &JsonValue) -> Vec<String> {
     for method_container in
         get_with_class(&implementation["children"], "impl-items")["children"].members()
     {
+        if contains_class(method_container, "unstable") {
+            continue;
+        }
         let method_element = &find_with_class(&method_container, "code-header").unwrap();
         let method = get_text(&method_element, "notable-traits");
         methods.push(prettify(&method));
@@ -227,6 +250,10 @@ fn get_implementations(main_content: &JsonValue) -> Vec<HashMap<String, Vec<Stri
         let mut result = HashMap::new();
 
         let methods = get_implementation_methods(implementation);
+
+        if methods.is_empty() {
+            continue;
+        }
 
         result.insert(implementation_header, methods);
         implementations.push(result);
@@ -246,6 +273,10 @@ fn get_trait_implementations(main_content: &JsonValue) -> Vec<HashMap<String, Ve
         let mut result = HashMap::new();
 
         let methods = get_implementation_methods(implementation);
+
+        if methods.is_empty() {
+            continue;
+        }
 
         result.insert(trait_implementation_header, methods);
         implementations.push(result);
