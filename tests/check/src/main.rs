@@ -123,7 +123,9 @@ fn main() {
             let info = info::get_info("./info.json");
             let local_api = get_api(&info, &name, "local");
             let std_api = get_api(&info, &name, "std");
-            implements(&local_api, &std_api);
+            if implements(&local_api, &std_api) == false {
+                std::process::exit(1);
+            }
         }
     }
 }

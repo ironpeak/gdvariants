@@ -1,6 +1,6 @@
 #!/bin/bash
 
-set -euo pipefail
+set -uo pipefail
 
 check() {
     cargo run --quiet --manifest-path=tests/check/Cargo.toml --bin check $@
