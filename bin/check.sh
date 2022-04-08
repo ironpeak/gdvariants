@@ -12,10 +12,5 @@ cargo doc --quiet --package gdvariants --no-deps
 mkdir -p ./tmp
 check list-sources | while read struct ; do
     echo "Comparing ${struct}"
-    check get-api ${struct} "local" | jq --sort-keys . > ./tmp/local.json
-    check get-api ${struct} "std" | jq --sort-keys . > ./tmp/std.json
-
-    jq .name ./tmp/local.json
-    jq .name ./tmp/std.json
-    exit 0
+    check implements ${struct}
 done

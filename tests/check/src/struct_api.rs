@@ -1,45 +1,43 @@
-use std::{collections::HashMap, fmt::Display, panic};
+use std::{fmt::Display, panic};
 
 use json::JsonValue;
 
 pub struct StructApi {
-    name: String,
-    declaration: String,
-    implementations: Vec<HashMap<String, Vec<String>>>,
-    trait_implementations: Vec<HashMap<String, Vec<String>>>,
+    pub name: String,
+    pub declaration: String,
+    pub implementations: Vec<(String, Vec<String>)>,
+    pub trait_implementations: Vec<(String, Vec<String>)>,
 }
 
 fn fmt_implementations(
-    implementations: &Vec<HashMap<String, Vec<String>>>,
+    implementations: &Vec<(String, Vec<String>)>,
     f: &mut std::fmt::Formatter<'_>,
     ident: usize,
 ) -> std::fmt::Result {
     let indent = format!("{:ident$}", "", ident = ident);
     write!(f, "{{")?;
     let mut impl_delim = "";
-    for implementation in implementations {
-        for (key, methods) in implementation {
+    for (key, methods) in implementations {
+        write!(
+            f,
+            "{}\n{indent}  \"{}\": [",
+            impl_delim,
+            key,
+            indent = indent,
+        )?;
+        let mut method_delim = "";
+        for method in methods {
             write!(
                 f,
-                "{}\n{indent}  \"{}\": [",
-                impl_delim,
-                key,
+                "{}\n{indent}    \"{}\"",
+                method_delim,
+                method,
                 indent = indent,
             )?;
-            let mut method_delim = "";
-            for method in methods {
-                write!(
-                    f,
-                    "{}\n{indent}    \"{}\"",
-                    method_delim,
-                    method,
-                    indent = indent,
-                )?;
-                method_delim = ",";
-            }
-            write!(f, "\n    ]")?;
-            impl_delim = ",";
+            method_delim = ",";
         }
+        write!(f, "\n    ]")?;
+        impl_delim = ",";
     }
     write!(f, "\n{indent}}}", indent = indent)
 }
@@ -242,12 +240,11 @@ fn get_implementation_methods(implementation: &JsonValue) -> Vec<String> {
     methods
 }
 
-fn get_implementations(main_content: &JsonValue) -> Vec<HashMap<String, Vec<String>>> {
+fn get_implementations(main_content: &JsonValue) -> Vec<(String, Vec<String>)> {
     let mut implementations = Vec::new();
 
     for implementation in get_all_with_class(&main_content["children"], "implementors-toggle") {
         let implementation_header = get_implementation_header(implementation);
-        let mut result = HashMap::new();
 
         let methods = get_implementation_methods(implementation);
 
@@ -255,14 +252,13 @@ fn get_implementations(main_content: &JsonValue) -> Vec<HashMap<String, Vec<Stri
             continue;
         }
 
-        result.insert(implementation_header, methods);
-        implementations.push(result);
+        implementations.push((implementation_header, methods));
     }
 
     implementations
 }
 
-fn get_trait_implementations(main_content: &JsonValue) -> Vec<HashMap<String, Vec<String>>> {
+fn get_trait_implementations(main_content: &JsonValue) -> Vec<(String, Vec<String>)> {
     let mut implementations = Vec::new();
 
     for implementation in get_all_with_class(
@@ -270,7 +266,6 @@ fn get_trait_implementations(main_content: &JsonValue) -> Vec<HashMap<String, Ve
         "implementors-toggle",
     ) {
         let trait_implementation_header = get_implementation_header(implementation);
-        let mut result = HashMap::new();
 
         let methods = get_implementation_methods(implementation);
 
@@ -278,8 +273,7 @@ fn get_trait_implementations(main_content: &JsonValue) -> Vec<HashMap<String, Ve
             continue;
         }
 
-        result.insert(trait_implementation_header, methods);
-        implementations.push(result);
+        implementations.push((trait_implementation_header, methods));
     }
 
     implementations
