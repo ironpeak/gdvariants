@@ -172,8 +172,8 @@ use gdnative::{
 /// The easiest way to use `HashMap` with a custom key type is to derive [`Eq`] and [`Hash`].
 /// We must also derive [`PartialEq`].
 ///
-/// [`RefCell`]: crate::cell::RefCell
-/// [`Cell`]: crate::cell::Cell
+/// [`RefCell`]: std::cell::RefCell
+/// [`Cell`]: std::cell::Cell
 /// [`default`]: Default::default
 /// [`with_hasher`]: Self::with_hasher
 /// [`with_capacity_and_hasher`]: Self::with_capacity_and_hasher
@@ -257,7 +257,7 @@ impl<K, V> HashMap<K, V, RandomState> {
     /// ```
     #[inline]
     #[must_use]
-    pub fn new() -> HashMap<K, V> {
+    pub fn new() -> HashMap<K, V, RandomState> {
         HashMap {
             base: std::collections::HashMap::new(),
         }
@@ -276,7 +276,7 @@ impl<K, V> HashMap<K, V, RandomState> {
     /// ```
     #[inline]
     #[must_use]
-    pub fn with_capacity(capacity: usize) -> HashMap<K, V> {
+    pub fn with_capacity(capacity: usize) -> HashMap<K, V, RandomState> {
         HashMap {
             base: std::collections::HashMap::with_capacity(capacity),
         }
@@ -964,12 +964,14 @@ where
     V: Clone,
     S: Clone,
 {
+    #[inline]
     fn clone(&self) -> Self {
         HashMap {
             base: self.base.clone(),
         }
     }
 
+    #[inline]
     fn clone_from(&mut self, other: &Self) {
         self.base.clone_from(&other.base)
     }
@@ -981,6 +983,7 @@ where
     V: PartialEq,
     S: BuildHasher,
 {
+    #[inline]
     fn eq(&self, other: &HashMap<K, V, S>) -> bool {
         self.base.eq(&other.base)
     }
@@ -999,6 +1002,7 @@ where
     K: Debug,
     V: Debug,
 {
+    #[inline]
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         self.base.fmt(f)
     }
@@ -1049,6 +1053,7 @@ where
     /// let map2: HashMap<_, _> = [(1, 2), (3, 4)].into();
     /// assert_eq!(map1, map2);
     /// ```
+    #[inline]
     fn from(arr: [(K, V); N]) -> Self {
         Self::from_iter(arr)
     }
@@ -1107,6 +1112,7 @@ where
     K: Eq + Hash,
     S: BuildHasher + Default,
 {
+    #[inline]
     fn from_iter<T: IntoIterator<Item = (K, V)>>(iter: T) -> Self {
         let mut map = HashMap::with_hasher(Default::default());
         map.extend(iter);
@@ -1134,7 +1140,8 @@ where
 //     V: Copy,
 //     S: BuildHasher,
 // {
+//     #[inline]
 //     fn extend<T: IntoIterator<Item = (&'a K, &'a V)>>(&mut self, iter: T) {
-//         self.hash_map.extend(iter)
+//         self.base.extend(iter)
 //     }
 // }

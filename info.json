@@ -1,0 +1,19 @@
+{
+    "name": "gdvariants",
+    "sources": [
+        {
+            "name": "HashMap",
+            "docs": {
+                "std": "https://doc.rust-lang.org/std/collections/struct.HashMap.html",
+                "local": "collections/struct.HashMap.html"
+            }
+        },
+        {
+            "name": "Vec",
+            "docs": {
+                "std": "https://doc.rust-lang.org/std/vec/struct.Vec.html",
+                "local": "vec/struct.Vec.html"
+            }
+        }
+    ]
+}
