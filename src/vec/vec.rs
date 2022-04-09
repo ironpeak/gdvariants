@@ -6,6 +6,7 @@ use std::{
     collections::TryReserveError,
     fmt::{self, Debug, Formatter},
     hash::{Hash, Hasher},
+    mem::MaybeUninit,
     ops::{Deref, DerefMut, Index, IndexMut, RangeBounds},
     slice::{self, IterMut, SliceIndex},
     vec::{Drain, IntoIter, Splice},
@@ -65,7 +66,7 @@ impl<T> Vec<T> {
     /// ```
     #[inline]
     #[must_use]
-    pub const fn new() -> Self {
+    pub const fn new() -> Vec<T> {
         Vec {
             base: std::vec::Vec::new(),
         }
@@ -110,7 +111,7 @@ impl<T> Vec<T> {
     /// ```
     #[inline]
     #[must_use]
-    pub fn with_capacity(capacity: usize) -> Self {
+    pub fn with_capacity(capacity: usize) -> Vec<T> {
         Vec {
             base: std::vec::Vec::with_capacity(capacity),
         }
@@ -179,14 +180,12 @@ impl<T> Vec<T> {
     /// }
     /// ```
     #[inline]
-    pub unsafe fn from_raw_parts(ptr: *mut T, length: usize, capacity: usize) -> Self {
+    pub unsafe fn from_raw_parts(ptr: *mut T, length: usize, capacity: usize) -> Vec<T> {
         Vec {
             base: std::vec::Vec::from_raw_parts(ptr, length, capacity),
         }
     }
-}
 
-impl<T> Vec<T> {
     /// Returns the number of elements the vector can hold without
     /// reallocating.
     ///
@@ -200,7 +199,6 @@ impl<T> Vec<T> {
     pub fn capacity(&self) -> usize {
         self.base.capacity()
     }
-
     /// Reserves capacity for at least `additional` more elements to be inserted
     /// in the given `Vec<T>`. The collection may reserve more space to avoid
     /// frequent reallocations. After calling `reserve`, capacity will be
@@ -735,7 +733,7 @@ impl<T> Vec<T> {
     pub fn dedup_by_key<F, K>(&mut self, key: F)
     where
         F: FnMut(&mut T) -> K,
-        K: PartialEq,
+        K: PartialEq<K>,
     {
         self.base.dedup_by_key(key)
     }
@@ -814,7 +812,7 @@ impl<T> Vec<T> {
     /// assert_eq!(vec2, []);
     /// ```
     #[inline]
-    pub fn append(&mut self, other: &mut Self) {
+    pub fn append(&mut self, other: &mut Vec<T>) {
         self.base.append(&mut other.base)
     }
 
@@ -918,7 +916,7 @@ impl<T> Vec<T> {
     /// ```
     #[inline]
     #[must_use = "use `.truncate()` if you don't need the other half"]
-    pub fn split_off(&mut self, at: usize) -> Self {
+    pub fn split_off(&mut self, at: usize) -> Vec<T> {
         Vec {
             base: self.base.split_off(at),
         }
@@ -984,9 +982,87 @@ impl<T> Vec<T> {
     pub fn leak<'a>(self) -> &'a mut [T] {
         self.base.leak()
     }
+
+    /// Returns the remaining spare capacity of the vector as a slice of
+    /// `MaybeUninit<T>`.
+    ///
+    /// The returned slice can be used to fill the vector with data (e.g. by
+    /// reading from a file) before marking the data as initialized using the
+    /// [`set_len`] method.
+    ///
+    /// [`set_len`]: Vec::set_len
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// // Allocate vector big enough for 10 elements.
+    /// let mut v = Vec::with_capacity(10);
+    ///
+    /// // Fill in the first 3 elements.
+    /// let uninit = v.spare_capacity_mut();
+    /// uninit[0].write(0);
+    /// uninit[1].write(1);
+    /// uninit[2].write(2);
+    ///
+    /// // Mark the first 3 elements of the vector as being initialized.
+    /// unsafe {
+    ///     v.set_len(3);
+    /// }
+    ///
+    /// assert_eq!(&v, &[0, 1, 2]);
+    /// ```
+    #[inline]
+    pub fn spare_capacity_mut(&mut self) -> &mut [MaybeUninit<T>] {
+        self.base.spare_capacity_mut()
+    }
+
+    /// Creates a splicing iterator that replaces the specified range in the vector
+    /// with the given `replace_with` iterator and yields the removed items.
+    /// `replace_with` does not need to be the same length as `range`.
+    ///
+    /// `range` is removed even if the iterator is not consumed until the end.
+    ///
+    /// It is unspecified how many elements are removed from the vector
+    /// if the `Splice` value is leaked.
+    ///
+    /// The input iterator `replace_with` is only consumed when the `Splice` value is dropped.
+    ///
+    /// This is optimal if:
+    ///
+    /// * The tail (elements in the vector after `range`) is empty,
+    /// * or `replace_with` yields fewer or equal elements than `range`’s length
+    /// * or the lower bound of its `size_hint()` is exact.
+    ///
+    /// Otherwise, a temporary vector is allocated and the tail is moved twice.
+    ///
+    /// # Panics
+    ///
+    /// Panics if the starting point is greater than the end point or if
+    /// the end point is greater than the length of the vector.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// let mut v = vec![1, 2, 3, 4];
+    /// let new = [7, 8, 9];
+    /// let u: Vec<_> = v.splice(1..3, new).collect();
+    /// assert_eq!(v, &[1, 7, 8, 9, 4]);
+    /// assert_eq!(u, &[2, 3]);
+    /// ```
+    #[inline]
+    pub fn splice<R, I>(&mut self, range: R, replace_with: I) -> Splice<'_, I::IntoIter>
+    where
+        R: RangeBounds<usize>,
+        I: IntoIterator<Item = T>,
+    {
+        self.base.splice(range, replace_with)
+    }
 }
 
-impl<T: Clone> Vec<T> {
+impl<T> Vec<T>
+where
+    T: Clone,
+{
     /// Resizes the `Vec` in-place so that `len` is equal to `new_len`.
     ///
     /// If `new_len` is greater than `len`, the `Vec` is extended by the
@@ -1066,7 +1142,10 @@ impl<T: Clone> Vec<T> {
     }
 }
 
-impl<T: PartialEq> Vec<T> {
+impl<T> Vec<T>
+where
+    T: PartialEq<T>,
+{
     /// Removes consecutive repeated elements in the vector according to the
     /// [`PartialEq`] trait implementation.
     ///
@@ -1106,7 +1185,7 @@ impl<T> DerefMut for Vec<T> {
 }
 
 impl<T: Clone> Clone for Vec<T> {
-    fn clone(&self) -> Self {
+    fn clone(&self) -> Vec<T> {
         Vec {
             base: self.base.clone(),
         }
@@ -1194,50 +1273,6 @@ impl<T> Extend<T> for Vec<T> {
     #[inline]
     fn extend<I: IntoIterator<Item = T>>(&mut self, iter: I) {
         self.base.extend(iter)
-    }
-}
-
-impl<T> Vec<T> {
-    /// Creates a splicing iterator that replaces the specified range in the vector
-    /// with the given `replace_with` iterator and yields the removed items.
-    /// `replace_with` does not need to be the same length as `range`.
-    ///
-    /// `range` is removed even if the iterator is not consumed until the end.
-    ///
-    /// It is unspecified how many elements are removed from the vector
-    /// if the `Splice` value is leaked.
-    ///
-    /// The input iterator `replace_with` is only consumed when the `Splice` value is dropped.
-    ///
-    /// This is optimal if:
-    ///
-    /// * The tail (elements in the vector after `range`) is empty,
-    /// * or `replace_with` yields fewer or equal elements than `range`’s length
-    /// * or the lower bound of its `size_hint()` is exact.
-    ///
-    /// Otherwise, a temporary vector is allocated and the tail is moved twice.
-    ///
-    /// # Panics
-    ///
-    /// Panics if the starting point is greater than the end point or if
-    /// the end point is greater than the length of the vector.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// let mut v = vec![1, 2, 3, 4];
-    /// let new = [7, 8, 9];
-    /// let u: Vec<_> = v.splice(1..3, new).collect();
-    /// assert_eq!(v, &[1, 7, 8, 9, 4]);
-    /// assert_eq!(u, &[2, 3]);
-    /// ```
-    #[inline]
-    pub fn splice<R, I>(&mut self, range: R, replace_with: I) -> Splice<'_, I::IntoIter>
-    where
-        R: RangeBounds<usize>,
-        I: IntoIterator<Item = T>,
-    {
-        self.base.splice(range, replace_with)
     }
 }
 
@@ -1381,7 +1416,7 @@ impl<T> From<Box<[T]>> for Vec<T> {
     /// let b: Box<[i32]> = vec![1, 2, 3].into_boxed_slice();
     /// assert_eq!(Vec::from(b), vec![1, 2, 3]);
     /// ```
-    fn from(s: Box<[T]>) -> Self {
+    fn from(s: Box<[T]>) -> Vec<T> {
         Vec { base: s.into_vec() }
     }
 }

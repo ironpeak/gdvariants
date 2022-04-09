@@ -11,4 +11,5 @@ doc:
     cargo doc --package gdvariants --no-deps --open
 
 check *FLAGS:
-    cargo run --manifest-path=tests/check/Cargo.toml --bin check {{FLAGS}}
+    cargo doc --quiet --package gdvariants --no-deps
+    cargo run --quiet --manifest-path=tests/check/Cargo.toml --bin check {{FLAGS}}

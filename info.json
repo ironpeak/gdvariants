@@ -26,7 +26,20 @@
                         "type": "implementation",
                         "name": "impl<T> Vec<T, Global>",
                         "value": "impl<T> Vec<T>",
-                        "methods": []
+                        "methods": [
+                            {
+                                "name": "pub const fn new() -> Vec<T, Global>",
+                                "value": "pub const fn new() -> Vec<T>"
+                            },
+                            {
+                                "name": "pub fn with_capacity(capacity: usize) -> Vec<T, Global>",
+                                "value": "pub fn with_capacity(capacity: usize) -> Vec<T>"
+                            },
+                            {
+                                "name": "pub unsafe fn from_raw_parts(ptr: *mut T, length: usize, capacity: usize) -> Vec<T, Global>",
+                                "value": "pub unsafe fn from_raw_parts(ptr: *mut T, length: usize, capacity: usize) -> Vec<T>"
+                            }
+                        ]
                     },
                     {
                         "type": "implementation",
@@ -36,6 +49,30 @@
                             {
                                 "name": "pub fn splice<R, I>(&mut self, range: R, replace_with: I) -> Splice<'_,<I as IntoIterator>::IntoIter, A> where R: RangeBounds< usize>, I: IntoIterator<Item = T>,",
                                 "value": "pub fn splice<R, I>(&mut self, range: R, replace_with: I) -> Splice<'_,<I as IntoIterator>::IntoIter> where R: RangeBounds< usize>, I: IntoIterator<Item = T>,"
+                            },
+                            {
+                                "name": "pub fn into_boxed_slice(self) -> Box<[T], A>",
+                                "value": "pub fn into_boxed_slice(self) -> Box<[T]>"
+                            },
+                            {
+                                "name": "pub fn append(&mut self, other: &mut Vec<T, A>)",
+                                "value": "pub fn append(&mut self, other: &mut Vec<T>)"
+                            },
+                            {
+                                "name": "pub fn drain<R>(&mut self, range: R) -> Drain<'_, T, A> where R: RangeBounds<usize>,",
+                                "value": "pub fn drain<R>(&mut self, range: R) -> Drain<'_, T> where R: RangeBounds<usize>,"
+                            },
+                            {
+                                "name": "pub fn split_off(&mut self, at: usize) -> Vec<T, A> where A: Clone,",
+                                "value": "pub fn split_off(&mut self, at: usize) -> Vec<T>"
+                            },
+                            {
+                                "name": "pub fn leak<'a>(self) -> &'a mut[T] where A: 'a,",
+                                "value": "pub fn leak<'a>(self) -> &'a mut[T]"
+                            },
+                            {
+                                "name": "pub fn splice<R, I>(&mut self, range: R, replace_with: I) -> Splice<'_,<I as IntoIterator>::IntoIter, A> where R: RangeBounds<usize>, I: IntoIterator<Item = T>,",
+                                "value": "pub fn splice<R, I>(&mut self, range: R, replace_with: I) -> Splice<'_, I::IntoIter> where R: RangeBounds<usize>, I: IntoIterator<Item = T>,"
                             }
                         ]
                     },
