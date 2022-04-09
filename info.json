@@ -144,6 +144,80 @@
                         "type": "trait",
                         "name": "impl<T, A> Clone for Vec<T, A> where T: Clone, A: Allocator + Clone,",
                         "value": "impl<T> Clone for Vec<T> where T: Clone,",
+                        "methods": [
+                            {
+                                "name": "fn clone(&self) -> Vec<T, A>",
+                                "value": "fn clone(&self) -> Vec<T>"
+                            },
+                            {
+                                "name": "fn clone_from(&mut self, other: &Vec<T, A>)",
+                                "value": "fn clone_from(&mut self, other: &Vec<T>)"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, A> Debug for Vec<T, A> where T: Debug, A: Allocator,",
+                        "value": "impl<T> Debug for Vec<T> where T: Debug,",
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T> Default for Vec<T, Global>",
+                        "value": "impl<T> Default for Vec<T>",
+                        "methods": [
+                            {
+                                "name": "fn default() -> Vec<T, Global>",
+                                "value": "fn default() -> Vec<T>"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, A> Deref for Vec<T, A> where A: Allocator,",
+                        "value": "impl<T> Deref for Vec<T>",
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, A> DerefMut for Vec<T, A> where A: Allocator,",
+                        "value": "impl<T> DerefMut for Vec<T>",
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, A> Drop for Vec<T, A> where A: Allocator,",
+                        "value": null,
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<'a, T, A> Extend<&'a T> for Vec<T, A> where T: 'a + Copy, A: 'a + Allocator,",
+                        "value": "impl<'a, T> Extend<&'a T> for Vec<T> where T: 'a + Copy,",
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, A> Extend<T> for Vec<T, A> where A: Allocator,",
+                        "value": "impl<T> Extend<T> for Vec<T>",
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<'_, T> From<&'_[T]> for Vec<T, Global> where T: Clone,",
+                        "value": null,
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<'_, T> From<&'_ mut[T]> for Vec<T, Global> where T: Clone,",
+                        "value": null,
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<'_> From<&'_ str> for Vec<u8, Global>",
+                        "value": null,
                         "methods": []
                     }
                 ]
