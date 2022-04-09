@@ -1,4 +1,11 @@
-use std::{borrow::Cow, collections::BinaryHeap};
+use std::{
+    borrow::Cow,
+    collections::{BinaryHeap, VecDeque},
+    ffi::CString,
+    num::NonZeroU8,
+    rc::Rc,
+    sync::Arc,
+};
 
 use crate::vec::Vec;
 
@@ -122,6 +129,72 @@ impl<T> From<BinaryHeap<T>> for Vec<T> {
     fn from(heap: BinaryHeap<T>) -> Vec<T> {
         Vec {
             base: std::vec::Vec::from(heap),
+        }
+    }
+}
+
+impl From<CString> for Vec<u8> {
+    fn from(s: CString) -> Vec<u8> {
+        Vec {
+            base: s.into_bytes(),
+        }
+    }
+}
+
+impl From<String> for Vec<u8> {
+    fn from(string: String) -> Vec<u8> {
+        Vec {
+            base: string.into_bytes(),
+        }
+    }
+}
+
+impl From<Vec<NonZeroU8>> for CString {
+    fn from(v: Vec<NonZeroU8>) -> CString {
+        CString::from(v.base)
+    }
+}
+
+impl<T> From<Vec<T>> for VecDeque<T> {
+    fn from(other: Vec<T>) -> VecDeque<T> {
+        VecDeque::from(other.base)
+    }
+}
+
+impl<'a, T> From<Vec<T>> for Cow<'a, [T]>
+where
+    T: Clone,
+{
+    fn from(v: Vec<T>) -> Cow<'a, [T]> {
+        Cow::Owned(v.base)
+    }
+}
+
+impl<T> From<Vec<T>> for Arc<[T]> {
+    fn from(v: Vec<T>) -> Arc<[T]> {
+        Arc::from(v.base)
+    }
+}
+
+impl<T> From<Vec<T>> for Rc<[T]> {
+    fn from(v: Vec<T>) -> Rc<[T]> {
+        Rc::from(v.base)
+    }
+}
+
+impl<T> From<Vec<T>> for BinaryHeap<T>
+where
+    T: Ord,
+{
+    fn from(vec: Vec<T>) -> BinaryHeap<T> {
+        BinaryHeap::from(vec.base)
+    }
+}
+
+impl<T> From<VecDeque<T>> for Vec<T> {
+    fn from(other: VecDeque<T>) -> Vec<T> {
+        Vec {
+            base: std::vec::Vec::from(other),
         }
     }
 }

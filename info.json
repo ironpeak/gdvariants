@@ -252,6 +252,107 @@
                                 "value": "fn from(heap: BinaryHeap<T>) -> Vec<T>"
                             }
                         ]
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, A> From<Box<[T], A>> for Vec<T, A> where A: Allocator,",
+                        "value": null,
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<'a, T> From<Cow<'a, [T]>> for Vec<T, Global> where [T] : ToOwned,<[T] as ToOwned>::Owned == Vec<T, Global>,",
+                        "value": null,
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl From<String> for Vec<u8, Global>",
+                        "value": "impl From<String> for Vec<u8>",
+                        "methods": [
+                            {
+                                "name": "fn from(string: String) -> Vec<u8, Global>",
+                                "value": "fn from(string: String) -> Vec<u8>"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl From<Vec<NonZeroU8, Global>> for CString",
+                        "value": "impl From<Vec<NonZeroU8>> for CString",
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, A> From<Vec<T, A>> for Box<[T], A> where A: Allocator,",
+                        "value": null,
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, A> From<Vec<T, A>> for VecDeque<T, A> where A: Allocator,",
+                        "value": "impl<T> From<Vec<T>> for VecDeque<T>",
+                        "methods": [
+                            {
+                                "name": "fn from(other: Vec<T, A>) -> VecDeque<T, A>",
+                                "value": "fn from(other: Vec<T>) -> VecDeque<T>"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<'a, T> From<Vec<T, Global>> for Cow<'a, [T]> where T: Clone,",
+                        "value": "impl<'a, T> From<Vec<T>> for Cow<'a, [T]> where T: Clone,",
+                        "methods": [
+                            {
+                                "name": "fn from(v: Vec<T, Global>) -> Cow<'a, [T]>",
+                                "value": "fn from(v: Vec<T>) -> Cow<'a, [T]>"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T> From<Vec<T, Global>> for Arc<[T]>",
+                        "value": "impl<T> From<Vec<T>> for Arc<[T]>",
+                        "methods": [
+                            {
+                                "name": "fn from(v: Vec<T, Global>) -> Arc<[T]>",
+                                "value": "fn from(v: Vec<T>) -> Arc<[T]>"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T> From<Vec<T, Global>> for Rc<[T]>",
+                        "value": "impl<T> From<Vec<T>> for Rc<[T]>",
+                        "methods": [
+                            {
+                                "name": "fn from(v: Vec<T, Global>) -> Rc<[T]>",
+                                "value": "fn from(v: Vec<T>) -> Rc<[T]>"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T> From<Vec<T, Global>> for BinaryHeap<T> where T: Ord,",
+                        "value": "impl<T> From<Vec<T>> for BinaryHeap<T> where T: Ord,",
+                        "methods": [
+                            {
+                                "name": "fn from(vec: Vec<T, Global>) -> BinaryHeap<T>",
+                                "value": "fn from(vec: Vec<T>) -> BinaryHeap<T>"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, A> From<VecDeque<T, A>> for Vec<T, A> where A: Allocator,",
+                        "value": "impl<T> From<VecDeque<T, Global>> for Vec<T>",
+                        "methods": [
+                            {
+                                "name": "fn from(other: VecDeque<T, A>) -> Vec<T, A>",
+                                "value": "fn from(other: VecDeque<T>) -> Vec<T>"
+                            }
+                        ]
                     }
                 ]
             }
