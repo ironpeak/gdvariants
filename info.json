@@ -467,6 +467,66 @@
                         "name": "impl<T, U, A> PartialEq<Vec<U, A>> for [T] where A: Allocator, T: PartialEq<U>,",
                         "value": null,
                         "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, U, A> PartialEq<Vec<U, A>> for VecDeque<T, A> where A: Allocator, T: PartialEq<U>,",
+                        "value": null,
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, U, A> PartialEq<Vec<U, A>> for Vec<T, A> where A: Allocator, T: PartialEq<U>,",
+                        "value": "impl<T, U> PartialEq<Vec<U>> for Vec<T> where T: PartialEq<U>,",
+                        "methods": [
+                            {
+                                "name": "fn eq(&self, other: &Vec<U, A>) -> bool",
+                                "value": "fn eq(&self, other: &Vec<U>) -> bool"
+                            },
+                            {
+                                "name": "fn ne(&self, other: &Vec<U, A>) -> bool",
+                                "value": "fn ne(&self, other: &Vec<U>) -> bool"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<'_, T, U, A> PartialEq<Vec<U, A>> for &'_ mut [T] where A: Allocator, T: PartialEq<U>,",
+                        "value": null,
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<'_, T, U, A> PartialEq<Vec<U, A>> for &'_ [T] where A: Allocator, T: PartialEq<U>,",
+                        "value": null,
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, A> PartialOrd<Vec<T, A>> for Vec<T, A> where T: PartialOrd<T>, A: Allocator,",
+                        "value": null,
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, A, const N: usize> TryFrom<Vec<T, A>> for [T; N] where A: Allocator,",
+                        "value": "impl<T, const N: usize> TryFrom<Vec<T>> for [T; N]",
+                        "methods": [
+                            {
+                                "name": "fn try_from(vec: Vec<T, A>) -> Result<[T; N], Vec<T, A>>",
+                                "value": "fn try_from(vec: Vec<T>) -> Result<[T; N], Vec<T>>"
+                            },
+                            {
+                                "name": "type Error = Vec<T, A>",
+                                "value": "type Error = Vec<T>"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<A: Allocator> Write for Vec<u8, A>",
+                        "value": "impl Write for Vec<u8>",
+                        "methods": []
                     }
                 ]
             }

@@ -21,3 +21,4 @@ jobs:
     - run: cargo clippy
     - run: cargo build
     - run: cargo test
+    - run: ./bin/check.sh

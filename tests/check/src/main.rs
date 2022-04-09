@@ -192,7 +192,6 @@ fn main() {
                     .overwrites,
                 &get_api(&info, &name, "std"),
             );
-            println!("{}", local_api);
             if implements(&local_api, &std_api) == false {
                 std::process::exit(1);
             }
