@@ -15,10 +15,11 @@ mod vec_impl_extend;
 mod vec_impl_from;
 mod vec_impl_from_iterator;
 mod vec_impl_hash;
+mod vec_impl_index;
+mod vec_impl_index_mut;
 mod vec_impl_into_iterator;
 mod vec_impl_ord;
 mod vec_impl_partial_eq;
 mod vec_impl_partial_ord;
-mod vec_impl_slice_index;
 
 pub use vec::Vec;

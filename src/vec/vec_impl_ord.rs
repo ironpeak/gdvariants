@@ -8,7 +8,7 @@ where
     T: Ord,
 {
     #[inline]
-    fn cmp(&self, other: &Self) -> Ordering {
+    fn cmp(&self, other: &Vec<T>) -> Ordering {
         self.base.cmp(&other.base)
     }
 }
