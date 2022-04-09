@@ -5,14 +5,59 @@
             "name": "HashMap",
             "docs": {
                 "std": "https://doc.rust-lang.org/std/collections/struct.HashMap.html",
-                "local": "collections/struct.HashMap.html"
+                "local": "collections/struct.HashMap.html",
+                "overwrites": [
+                    {
+                        "type": "trait",
+                        "name": "impl<'a, K, V, S> Extend<(&'a K, &'a V)> for HashMap<K, V, S> where K: Eq + Hash + Copy, V: Copy, S: BuildHasher,",
+                        "value": null,
+                        "methods": []
+                    }
+                ]
             }
         },
         {
             "name": "Vec",
             "docs": {
                 "std": "https://doc.rust-lang.org/std/vec/struct.Vec.html",
-                "local": "vec/struct.Vec.html"
+                "local": "vec/struct.Vec.html",
+                "overwrites": [
+                    {
+                        "type": "implementation",
+                        "name": "impl<T> Vec<T, Global>",
+                        "value": "impl<T> Vec<T>",
+                        "methods": []
+                    },
+                    {
+                        "type": "implementation",
+                        "name": "impl<T, A> Vec<T, A> where A: Allocator,",
+                        "value": "impl<T> Vec<T>",
+                        "methods": [
+                            {
+                                "name": "pub fn splice<R, I>(&mut self, range: R, replace_with: I) -> Splice<'_,<I as IntoIterator>::IntoIter, A> where R: RangeBounds< usize>, I: IntoIterator<Item = T>,",
+                                "value": "pub fn splice<R, I>(&mut self, range: R, replace_with: I) -> Splice<'_,<I as IntoIterator>::IntoIter> where R: RangeBounds< usize>, I: IntoIterator<Item = T>,"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "implementation",
+                        "name": "impl<T, A> Vec<T, A> where T: Clone, A: Allocator,",
+                        "value": "impl<T> Vec<T> where T: Clone,",
+                        "methods": []
+                    },
+                    {
+                        "type": "implementation",
+                        "name": "impl<T, A> Vec<T, A> where T: PartialEq<T>, A: Allocator,",
+                        "value": "impl<T> Vec<T> where T: PartialEq<T>,",
+                        "methods": []
+                    },
+                    {
+                        "type": "implementation",
+                        "name": "impl<T, A> Vec<T, A> where A: Allocator,",
+                        "value": "impl<T> Vec<T>",
+                        "methods": []
+                    }
+                ]
             }
         }
     ]

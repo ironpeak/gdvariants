@@ -1,7 +1,7 @@
 use clap::{Parser, Subcommand};
 
 use html_parser::Dom;
-use info::Info;
+use info::{Info, Overwrite};
 use struct_api::StructApi;
 
 mod info;
@@ -105,6 +105,66 @@ fn implements(local_api: &StructApi, std_api: &StructApi) -> bool {
     success
 }
 
+fn overwrite(
+    overwrites: &Vec<Overwrite>,
+    type_field: &str,
+    name: &String,
+    methods: &Vec<String>,
+) -> Option<(String, Vec<String>)> {
+    match overwrites
+        .iter()
+        .find(|&x| &x.name == name && &x.type_field == type_field)
+    {
+        Some(overwrite) => match &overwrite.value {
+            Some(new_name) => {
+                let mut new_methods = Vec::new();
+                for method in methods {
+                    let new_method = match overwrite.methods.iter().find(|&x| &x.name == method) {
+                        Some(overwrite) => &overwrite.value,
+                        None => method,
+                    };
+                    new_methods.push(new_method.to_string());
+                }
+                Some((new_name.to_string(), new_methods))
+            }
+            None => None,
+        },
+        None => Some((name.clone(), methods.clone())),
+    }
+}
+
+fn apply(overwrites: &Vec<Overwrite>, api: &StructApi) -> StructApi {
+    let name = api.name.clone();
+    let decleration = api.declaration.clone();
+
+    let mut implementations = Vec::new();
+    for (name, methods) in &api.implementations {
+        match overwrite(overwrites, "implementation", name, methods) {
+            Some((name, methods)) => {
+                implementations.push((name, methods));
+            }
+            None => continue,
+        }
+    }
+
+    let mut trait_implementations = Vec::new();
+    for (name, methods) in &api.trait_implementations {
+        match overwrite(overwrites, "trait", name, methods) {
+            Some((name, methods)) => {
+                trait_implementations.push((name, methods));
+            }
+            None => continue,
+        }
+    }
+
+    StructApi {
+        name: name,
+        declaration: decleration,
+        implementations: implementations,
+        trait_implementations: trait_implementations,
+    }
+}
+
 fn main() {
     let args = Cli::parse();
     match args.command {
@@ -122,7 +182,16 @@ fn main() {
         Commands::Implements { name } => {
             let info = info::get_info("./info.json");
             let local_api = get_api(&info, &name, "local");
-            let std_api = get_api(&info, &name, "std");
+            let std_api = apply(
+                &info
+                    .sources
+                    .iter()
+                    .find(|x| x.name == name)
+                    .unwrap()
+                    .docs
+                    .overwrites,
+                &get_api(&info, &name, "std"),
+            );
             if implements(&local_api, &std_api) == false {
                 std::process::exit(1);
             }
