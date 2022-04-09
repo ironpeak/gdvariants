@@ -1021,23 +1021,23 @@ where
     }
 }
 
-impl<K, Q: ?Sized, V, S> Index<&Q> for HashMap<K, V, S>
+impl<K, Q: ?Sized, V, S> Index<&'_ Q> for HashMap<K, V, S>
 where
     K: Eq + Hash + Borrow<Q>,
     Q: Eq + Hash,
     S: BuildHasher,
 {
-    type Output = V;
-
     /// Returns a reference to the value corresponding to the supplied key.
     ///
     /// # Panics
     ///
     /// Panics if the key is not present in the `HashMap`.
     #[inline]
-    fn index(&self, index: &'_ Q) -> &Self::Output {
-        self.base.index(index)
+    fn index(&self, key: &Q) -> &V {
+        self.base.index(key)
     }
+
+    type Output = V;
 }
 
 impl<K, V, const N: usize> From<[(K, V); N]> for HashMap<K, V, RandomState>
@@ -1064,7 +1064,7 @@ impl<'a, K, V, S> IntoIterator for &'a HashMap<K, V, S> {
     type IntoIter = Iter<'a, K, V>;
 
     #[inline]
-    fn into_iter(self) -> Self::IntoIter {
+    fn into_iter(self) -> Iter<'a, K, V> {
         self.base.iter()
     }
 }
@@ -1113,7 +1113,7 @@ where
     S: BuildHasher + Default,
 {
     #[inline]
-    fn from_iter<T: IntoIterator<Item = (K, V)>>(iter: T) -> Self {
+    fn from_iter<T: IntoIterator<Item = (K, V)>>(iter: T) -> HashMap<K, V, S> {
         let mut map = HashMap::with_hasher(Default::default());
         map.extend(iter);
         map

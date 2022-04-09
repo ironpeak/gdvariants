@@ -72,12 +72,16 @@ fn prettify(str: &str) -> String {
             .replace(" (", "(")
             .replace("( ", "(")
             .replace(" )", ")")
+            .replace("[ ", "[")
+            .replace(" ]", "]")
             .replace(" <", "<")
+            .replace("< ", "<")
             .replace(" >", ">")
             .replace("& ", "&")
             .replace("? ", "?")
             .replace(" ,", ",")
-            .replace("\n", "")
+            .replace(" ;", ";")
+            .replace("\n", " ")
             .trim()
             .to_string();
         if current == previous {
@@ -267,7 +271,10 @@ fn get_trait_implementations(main_content: &JsonValue) -> Vec<(String, Vec<Strin
     ) {
         let trait_implementation_header = get_implementation_header(implementation);
 
-        let methods = get_implementation_methods(implementation);
+        let methods: Vec<String> = get_implementation_methods(implementation)
+            .iter()
+            .map(|x| x.replace("pub fn ", "fn "))
+            .collect();
 
         if methods.is_empty() {
             continue;

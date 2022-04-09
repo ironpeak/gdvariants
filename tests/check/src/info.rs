@@ -21,6 +21,25 @@ pub struct Source {
 pub struct Docs {
     pub std: String,
     pub local: String,
+    pub overwrites: Vec<Overwrite>,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Overwrite {
+    #[serde(rename = "type")]
+    pub type_field: String,
+    pub name: String,
+    pub value: Option<String>,
+    #[serde(default)]
+    pub methods: Vec<Method>,
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Method {
+    pub name: String,
+    pub value: String,
 }
 
 pub fn get_info(filename: &str) -> Info {

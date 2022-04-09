@@ -5,14 +5,530 @@
             "name": "HashMap",
             "docs": {
                 "std": "https://doc.rust-lang.org/std/collections/struct.HashMap.html",
-                "local": "collections/struct.HashMap.html"
+                "local": "collections/struct.HashMap.html",
+                "overwrites": [
+                    {
+                        "type": "trait",
+                        "name": "impl<'a, K, V, S> Extend<(&'a K, &'a V)> for HashMap<K, V, S> where K: Eq + Hash + Copy, V: Copy, S: BuildHasher,",
+                        "value": null,
+                        "methods": []
+                    }
+                ]
             }
         },
         {
             "name": "Vec",
             "docs": {
                 "std": "https://doc.rust-lang.org/std/vec/struct.Vec.html",
-                "local": "vec/struct.Vec.html"
+                "local": "vec/struct.Vec.html",
+                "overwrites": [
+                    {
+                        "type": "implementation",
+                        "name": "impl<T> Vec<T, Global>",
+                        "value": "impl<T> Vec<T>",
+                        "methods": [
+                            {
+                                "name": "pub const fn new() -> Vec<T, Global>",
+                                "value": "pub const fn new() -> Vec<T>"
+                            },
+                            {
+                                "name": "pub fn with_capacity(capacity: usize) -> Vec<T, Global>",
+                                "value": "pub fn with_capacity(capacity: usize) -> Vec<T>"
+                            },
+                            {
+                                "name": "pub unsafe fn from_raw_parts(ptr: *mut T, length: usize, capacity: usize) -> Vec<T, Global>",
+                                "value": "pub unsafe fn from_raw_parts(ptr: *mut T, length: usize, capacity: usize) -> Vec<T>"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "implementation",
+                        "name": "impl<T, A> Vec<T, A> where A: Allocator,",
+                        "value": "impl<T> Vec<T>",
+                        "methods": [
+                            {
+                                "name": "pub fn splice<R, I>(&mut self, range: R, replace_with: I) -> Splice<'_,<I as IntoIterator>::IntoIter, A> where R: RangeBounds< usize>, I: IntoIterator<Item = T>,",
+                                "value": "pub fn splice<R, I>(&mut self, range: R, replace_with: I) -> Splice<'_,<I as IntoIterator>::IntoIter> where R: RangeBounds< usize>, I: IntoIterator<Item = T>,"
+                            },
+                            {
+                                "name": "pub fn into_boxed_slice(self) -> Box<[T], A>",
+                                "value": "pub fn into_boxed_slice(self) -> Box<[T]>"
+                            },
+                            {
+                                "name": "pub fn append(&mut self, other: &mut Vec<T, A>)",
+                                "value": "pub fn append(&mut self, other: &mut Vec<T>)"
+                            },
+                            {
+                                "name": "pub fn drain<R>(&mut self, range: R) -> Drain<'_, T, A> where R: RangeBounds<usize>,",
+                                "value": "pub fn drain<R>(&mut self, range: R) -> Drain<'_, T> where R: RangeBounds<usize>,"
+                            },
+                            {
+                                "name": "pub fn split_off(&mut self, at: usize) -> Vec<T, A> where A: Clone,",
+                                "value": "pub fn split_off(&mut self, at: usize) -> Vec<T>"
+                            },
+                            {
+                                "name": "pub fn leak<'a>(self) -> &'a mut [T] where A: 'a,",
+                                "value": "pub fn leak<'a>(self) -> &'a mut [T]"
+                            },
+                            {
+                                "name": "pub fn splice<R, I>(&mut self, range: R, replace_with: I) -> Splice<'_,<I as IntoIterator>::IntoIter, A> where R: RangeBounds<usize>, I: IntoIterator<Item = T>,",
+                                "value": "pub fn splice<R, I>(&mut self, range: R, replace_with: I) -> Splice<'_, I::IntoIter> where R: RangeBounds<usize>, I: IntoIterator<Item = T>,"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "implementation",
+                        "name": "impl<T, A> Vec<T, A> where T: Clone, A: Allocator,",
+                        "value": "impl<T> Vec<T> where T: Clone,",
+                        "methods": []
+                    },
+                    {
+                        "type": "implementation",
+                        "name": "impl<T, A> Vec<T, A> where T: PartialEq<T>, A: Allocator,",
+                        "value": "impl<T> Vec<T> where T: PartialEq<T>,",
+                        "methods": []
+                    },
+                    {
+                        "type": "implementation",
+                        "name": "impl<T, A> Vec<T, A> where A: Allocator,",
+                        "value": "impl<T> Vec<T>",
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, A> AsMut<[T]> for Vec<T, A> where A: Allocator,",
+                        "value": "impl<T> AsMut<[T]> for Vec<T>",
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, A> AsMut<Vec<T, A>> for Vec<T, A> where A: Allocator,",
+                        "value": "impl<T> AsMut<Vec<T>> for Vec<T>",
+                        "methods": [
+                            {
+                                "name": "fn as_mut(&mut self) -> &mut Vec<T, A>",
+                                "value": "fn as_mut(&mut self) -> &mut Vec<T>"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, A> AsRef<[T]> for Vec<T, A> where A: Allocator,",
+                        "value": "impl<T> AsRef<[T]> for Vec<T>",
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, A> AsRef<Vec<T, A>> for Vec<T, A> where A: Allocator,",
+                        "value": "impl<T> AsRef<Vec<T>> for Vec<T>",
+                        "methods": [
+                            {
+                                "name": "fn as_ref(&self) -> &Vec<T, A>",
+                                "value": "fn as_ref(&self) -> &Vec<T>"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T> Borrow<[T]> for Vec<T, Global>",
+                        "value": "impl<T> Borrow<[T]> for Vec<T>",
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T> BorrowMut<[T]> for Vec<T, Global>",
+                        "value": "impl<T> BorrowMut<[T]> for Vec<T>",
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, A> Clone for Vec<T, A> where T: Clone, A: Allocator + Clone,",
+                        "value": "impl<T> Clone for Vec<T> where T: Clone,",
+                        "methods": [
+                            {
+                                "name": "fn clone(&self) -> Vec<T, A>",
+                                "value": "fn clone(&self) -> Vec<T>"
+                            },
+                            {
+                                "name": "fn clone_from(&mut self, other: &Vec<T, A>)",
+                                "value": "fn clone_from(&mut self, other: &Vec<T>)"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, A> Debug for Vec<T, A> where T: Debug, A: Allocator,",
+                        "value": "impl<T> Debug for Vec<T> where T: Debug,",
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T> Default for Vec<T, Global>",
+                        "value": "impl<T> Default for Vec<T>",
+                        "methods": [
+                            {
+                                "name": "fn default() -> Vec<T, Global>",
+                                "value": "fn default() -> Vec<T>"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, A> Deref for Vec<T, A> where A: Allocator,",
+                        "value": "impl<T> Deref for Vec<T>",
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, A> DerefMut for Vec<T, A> where A: Allocator,",
+                        "value": "impl<T> DerefMut for Vec<T>",
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, A> Drop for Vec<T, A> where A: Allocator,",
+                        "value": null,
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<'a, T, A> Extend<&'a T> for Vec<T, A> where T: 'a + Copy, A: 'a + Allocator,",
+                        "value": "impl<'a, T> Extend<&'a T> for Vec<T> where T: 'a + Copy,",
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, A> Extend<T> for Vec<T, A> where A: Allocator,",
+                        "value": "impl<T> Extend<T> for Vec<T>",
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<'_, T> From<&'_ [T]> for Vec<T, Global> where T: Clone,",
+                        "value": null,
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<'_, T> From<&'_ mut [T]> for Vec<T, Global> where T: Clone,",
+                        "value": null,
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<'_> From<&'_ str> for Vec<u8, Global>",
+                        "value": null,
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<'a, T> From<&'a Vec<T, Global>> for Cow<'a, [T]> where T: Clone,",
+                        "value": "impl<'a, T> From<&'a Vec<T>> for Cow<'a, [T]> where T: Clone,",
+                        "methods": [
+                            {
+                                "name": "fn from(v: &'a Vec<T, Global>) -> Cow<'a, [T]>",
+                                "value": "fn from(v: &'a Vec<T>) -> Cow<'a, [T]>"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, const N: usize> From<[T; N]> for Vec<T, Global>",
+                        "value": "impl<T, const N: usize> From<[T; N]> for Vec<T>",
+                        "methods": [
+                            {
+                                "name": "fn from(s: [T; N]) -> Vec<T, Global>",
+                                "value": "fn from(s: [T; N]) -> Vec<T>"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T> From<BinaryHeap<T>> for Vec<T, Global>",
+                        "value": "impl<T> From<BinaryHeap<T>> for Vec<T>",
+                        "methods": [
+                            {
+                                "name": "fn from(heap: BinaryHeap<T>) -> Vec<T, Global>",
+                                "value": "fn from(heap: BinaryHeap<T>) -> Vec<T>"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, A> From<Box<[T], A>> for Vec<T, A> where A: Allocator,",
+                        "value": null,
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<'a, T> From<Cow<'a, [T]>> for Vec<T, Global> where [T] : ToOwned,<[T] as ToOwned>::Owned == Vec<T, Global>,",
+                        "value": null,
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl From<String> for Vec<u8, Global>",
+                        "value": "impl From<String> for Vec<u8>",
+                        "methods": [
+                            {
+                                "name": "fn from(string: String) -> Vec<u8, Global>",
+                                "value": "fn from(string: String) -> Vec<u8>"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl From<Vec<NonZeroU8, Global>> for CString",
+                        "value": "impl From<Vec<NonZeroU8>> for CString",
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, A> From<Vec<T, A>> for Box<[T], A> where A: Allocator,",
+                        "value": null,
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, A> From<Vec<T, A>> for VecDeque<T, A> where A: Allocator,",
+                        "value": "impl<T> From<Vec<T>> for VecDeque<T>",
+                        "methods": [
+                            {
+                                "name": "fn from(other: Vec<T, A>) -> VecDeque<T, A>",
+                                "value": "fn from(other: Vec<T>) -> VecDeque<T>"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<'a, T> From<Vec<T, Global>> for Cow<'a, [T]> where T: Clone,",
+                        "value": "impl<'a, T> From<Vec<T>> for Cow<'a, [T]> where T: Clone,",
+                        "methods": [
+                            {
+                                "name": "fn from(v: Vec<T, Global>) -> Cow<'a, [T]>",
+                                "value": "fn from(v: Vec<T>) -> Cow<'a, [T]>"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T> From<Vec<T, Global>> for Arc<[T]>",
+                        "value": "impl<T> From<Vec<T>> for Arc<[T]>",
+                        "methods": [
+                            {
+                                "name": "fn from(v: Vec<T, Global>) -> Arc<[T]>",
+                                "value": "fn from(v: Vec<T>) -> Arc<[T]>"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T> From<Vec<T, Global>> for Rc<[T]>",
+                        "value": "impl<T> From<Vec<T>> for Rc<[T]>",
+                        "methods": [
+                            {
+                                "name": "fn from(v: Vec<T, Global>) -> Rc<[T]>",
+                                "value": "fn from(v: Vec<T>) -> Rc<[T]>"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T> From<Vec<T, Global>> for BinaryHeap<T> where T: Ord,",
+                        "value": "impl<T> From<Vec<T>> for BinaryHeap<T> where T: Ord,",
+                        "methods": [
+                            {
+                                "name": "fn from(vec: Vec<T, Global>) -> BinaryHeap<T>",
+                                "value": "fn from(vec: Vec<T>) -> BinaryHeap<T>"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, A> From<VecDeque<T, A>> for Vec<T, A> where A: Allocator,",
+                        "value": "impl<T> From<VecDeque<T, Global>> for Vec<T>",
+                        "methods": [
+                            {
+                                "name": "fn from(other: VecDeque<T, A>) -> Vec<T, A>",
+                                "value": "fn from(other: VecDeque<T>) -> Vec<T>"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T> FromIterator<T> for Vec<T, Global>",
+                        "value": null,
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, A> Hash for Vec<T, A> where T: Hash, A: Allocator,",
+                        "value": null,
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, I, A> Index<I> for Vec<T, A> where I: SliceIndex<[T]>, A: Allocator,",
+                        "value": "impl<T, I> Index<I> for Vec<T> where I: SliceIndex<[T]>,",
+                        "methods": [
+                            {
+                                "name": "fn index(&self, index: I) -> &<Vec<T, A> as Index<I>>::Output",
+                                "value": "fn index(&self, index: I) -> &<Vec<T> as Index<I>>::Output"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, I, A> IndexMut<I> for Vec<T, A> where I: SliceIndex<[T]>, A: Allocator,",
+                        "value": "impl<T, I> IndexMut<I> for Vec<T> where I: SliceIndex<[T]>,",
+                        "methods": [
+                            {
+                                "name": "fn index_mut(&mut self, index: I) -> &mut<Vec<T, A> as Index<I>>::Output",
+                                "value": "fn index_mut(&mut self, index: I) -> &mut<Vec<T> as Index<I>>::Output"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<'a, T, A> IntoIterator for &'a Vec<T, A> where A: Allocator,",
+                        "value": "impl<'a, T> IntoIterator for &'a Vec<T>",
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<'a, T, A> IntoIterator for &'a mut Vec<T, A> where A: Allocator,",
+                        "value": "impl<'a, T> IntoIterator for &'a mut Vec<T>",
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, A> IntoIterator for Vec<T, A> where A: Allocator,",
+                        "value": "impl<T> IntoIterator for Vec<T>",
+                        "methods": [
+                            {
+                                "name": "fn into_iter(self) -> IntoIter<T, A>",
+                                "value": "fn into_iter(self) -> IntoIter<T>"
+                            },
+                            {
+                                "name": "type IntoIter = IntoIter<T, A>",
+                                "value": "type IntoIter = IntoIter<T>"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, A> Ord for Vec<T, A> where T: Ord, A: Allocator,",
+                        "value": "impl<T> Ord for Vec<T> where T: Ord,",
+                        "methods": [
+                            {
+                                "name": "fn cmp(&self, other: &Vec<T, A>) -> Ordering",
+                                "value": "fn cmp(&self, other: &Vec<T>) -> Ordering"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<'_, T, U, A, const N: usize> PartialEq<&'_ [U; N]> for Vec<T, A> where A: Allocator, T: PartialEq<U>,",
+                        "value": null,
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<'_, T, U, A> PartialEq<&'_ [U]> for Vec<T, A> where A: Allocator, T: PartialEq<U>,",
+                        "value": null,
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<'_, T, U, A> PartialEq<&'_ mut [U]> for Vec<T, A> where A: Allocator, T: PartialEq<U>,",
+                        "value": null,
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, U, A, const N: usize> PartialEq<[U; N]> for Vec<T, A> where A: Allocator, T: PartialEq<U>,",
+                        "value": null,
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, U, A> PartialEq<[U]> for Vec<T, A> where A: Allocator, T: PartialEq<U>,",
+                        "value": null,
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<'_, T, U, A> PartialEq<Vec<U, A>> for Cow<'_, [T]> where A: Allocator, T: PartialEq<U> + Clone,",
+                        "value": null,
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, U, A> PartialEq<Vec<U, A>> for [T] where A: Allocator, T: PartialEq<U>,",
+                        "value": null,
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, U, A> PartialEq<Vec<U, A>> for VecDeque<T, A> where A: Allocator, T: PartialEq<U>,",
+                        "value": null,
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, U, A> PartialEq<Vec<U, A>> for Vec<T, A> where A: Allocator, T: PartialEq<U>,",
+                        "value": "impl<T, U> PartialEq<Vec<U>> for Vec<T> where T: PartialEq<U>,",
+                        "methods": [
+                            {
+                                "name": "fn eq(&self, other: &Vec<U, A>) -> bool",
+                                "value": "fn eq(&self, other: &Vec<U>) -> bool"
+                            },
+                            {
+                                "name": "fn ne(&self, other: &Vec<U, A>) -> bool",
+                                "value": "fn ne(&self, other: &Vec<U>) -> bool"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<'_, T, U, A> PartialEq<Vec<U, A>> for &'_ mut [T] where A: Allocator, T: PartialEq<U>,",
+                        "value": null,
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<'_, T, U, A> PartialEq<Vec<U, A>> for &'_ [T] where A: Allocator, T: PartialEq<U>,",
+                        "value": null,
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, A> PartialOrd<Vec<T, A>> for Vec<T, A> where T: PartialOrd<T>, A: Allocator,",
+                        "value": null,
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, A, const N: usize> TryFrom<Vec<T, A>> for [T; N] where A: Allocator,",
+                        "value": "impl<T, const N: usize> TryFrom<Vec<T>> for [T; N]",
+                        "methods": [
+                            {
+                                "name": "fn try_from(vec: Vec<T, A>) -> Result<[T; N], Vec<T, A>>",
+                                "value": "fn try_from(vec: Vec<T>) -> Result<[T; N], Vec<T>>"
+                            },
+                            {
+                                "name": "type Error = Vec<T, A>",
+                                "value": "type Error = Vec<T>"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<A: Allocator> Write for Vec<u8, A>",
+                        "value": "impl Write for Vec<u8>",
+                        "methods": []
+                    }
+                ]
             }
         }
     ]
