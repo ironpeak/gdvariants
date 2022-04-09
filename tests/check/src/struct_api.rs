@@ -72,7 +72,6 @@ fn prettify(str: &str) -> String {
             .replace(" (", "(")
             .replace("( ", "(")
             .replace(" )", ")")
-            .replace(" [", "[")
             .replace("[ ", "[")
             .replace(" ]", "]")
             .replace(" <", "<")
@@ -81,7 +80,8 @@ fn prettify(str: &str) -> String {
             .replace("& ", "&")
             .replace("? ", "?")
             .replace(" ,", ",")
-            .replace("\n", "")
+            .replace(" ;", ";")
+            .replace("\n", " ")
             .trim()
             .to_string();
         if current == previous {

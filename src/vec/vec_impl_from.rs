@@ -1,4 +1,4 @@
-use std::borrow::Cow;
+use std::{borrow::Cow, collections::BinaryHeap};
 
 use crate::vec::Vec;
 
@@ -106,5 +106,22 @@ impl From<&str> for Vec<u8> {
     /// ```
     fn from(s: &str) -> Vec<u8> {
         From::from(s.as_bytes())
+    }
+}
+
+impl<'a, T> From<&'a Vec<T>> for Cow<'a, [T]>
+where
+    T: Clone,
+{
+    fn from(v: &'a Vec<T>) -> Cow<'a, [T]> {
+        Cow::Borrowed(v.as_slice())
+    }
+}
+
+impl<T> From<BinaryHeap<T>> for Vec<T> {
+    fn from(heap: BinaryHeap<T>) -> Vec<T> {
+        Vec {
+            base: std::vec::Vec::from(heap),
+        }
     }
 }

@@ -67,8 +67,8 @@
                                 "value": "pub fn split_off(&mut self, at: usize) -> Vec<T>"
                             },
                             {
-                                "name": "pub fn leak<'a>(self) -> &'a mut[T] where A: 'a,",
-                                "value": "pub fn leak<'a>(self) -> &'a mut[T]"
+                                "name": "pub fn leak<'a>(self) -> &'a mut [T] where A: 'a,",
+                                "value": "pub fn leak<'a>(self) -> &'a mut [T]"
                             },
                             {
                                 "name": "pub fn splice<R, I>(&mut self, range: R, replace_with: I) -> Splice<'_,<I as IntoIterator>::IntoIter, A> where R: RangeBounds<usize>, I: IntoIterator<Item = T>,",
@@ -204,13 +204,13 @@
                     },
                     {
                         "type": "trait",
-                        "name": "impl<'_, T> From<&'_[T]> for Vec<T, Global> where T: Clone,",
+                        "name": "impl<'_, T> From<&'_ [T]> for Vec<T, Global> where T: Clone,",
                         "value": null,
                         "methods": []
                     },
                     {
                         "type": "trait",
-                        "name": "impl<'_, T> From<&'_ mut[T]> for Vec<T, Global> where T: Clone,",
+                        "name": "impl<'_, T> From<&'_ mut [T]> for Vec<T, Global> where T: Clone,",
                         "value": null,
                         "methods": []
                     },
@@ -219,6 +219,39 @@
                         "name": "impl<'_> From<&'_ str> for Vec<u8, Global>",
                         "value": null,
                         "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<'a, T> From<&'a Vec<T, Global>> for Cow<'a, [T]> where T: Clone,",
+                        "value": "impl<'a, T> From<&'a Vec<T>> for Cow<'a, [T]> where T: Clone,",
+                        "methods": [
+                            {
+                                "name": "fn from(v: &'a Vec<T, Global>) -> Cow<'a, [T]>",
+                                "value": "fn from(v: &'a Vec<T>) -> Cow<'a, [T]>"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, const N: usize> From<[T; N]> for Vec<T, Global>",
+                        "value": "impl<T, const N: usize> From<[T; N]> for Vec<T>",
+                        "methods": [
+                            {
+                                "name": "fn from(s: [T; N]) -> Vec<T, Global>",
+                                "value": "fn from(s: [T; N]) -> Vec<T>"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T> From<BinaryHeap<T>> for Vec<T, Global>",
+                        "value": "impl<T> From<BinaryHeap<T>> for Vec<T>",
+                        "methods": [
+                            {
+                                "name": "fn from(heap: BinaryHeap<T>) -> Vec<T, Global>",
+                                "value": "fn from(heap: BinaryHeap<T>) -> Vec<T>"
+                            }
+                        ]
                     }
                 ]
             }
