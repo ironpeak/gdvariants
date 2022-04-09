@@ -93,6 +93,58 @@
                         "name": "impl<T, A> Vec<T, A> where A: Allocator,",
                         "value": "impl<T> Vec<T>",
                         "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, A> AsMut<[T]> for Vec<T, A> where A: Allocator,",
+                        "value": "impl<T> AsMut<[T]> for Vec<T>",
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, A> AsMut<Vec<T, A>> for Vec<T, A> where A: Allocator,",
+                        "value": "impl<T> AsMut<Vec<T>> for Vec<T>",
+                        "methods": [
+                            {
+                                "name": "fn as_mut(&mut self) -> &mut Vec<T, A>",
+                                "value": "fn as_mut(&mut self) -> &mut Vec<T>"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, A> AsRef<[T]> for Vec<T, A> where A: Allocator,",
+                        "value": "impl<T> AsRef<[T]> for Vec<T>",
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, A> AsRef<Vec<T, A>> for Vec<T, A> where A: Allocator,",
+                        "value": "impl<T> AsRef<Vec<T>> for Vec<T>",
+                        "methods": [
+                            {
+                                "name": "fn as_ref(&self) -> &Vec<T, A>",
+                                "value": "fn as_ref(&self) -> &Vec<T>"
+                            }
+                        ]
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T> Borrow<[T]> for Vec<T, Global>",
+                        "value": "impl<T> Borrow<[T]> for Vec<T>",
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T> BorrowMut<[T]> for Vec<T, Global>",
+                        "value": "impl<T> BorrowMut<[T]> for Vec<T>",
+                        "methods": []
+                    },
+                    {
+                        "type": "trait",
+                        "name": "impl<T, A> Clone for Vec<T, A> where T: Clone, A: Allocator + Clone,",
+                        "value": "impl<T> Clone for Vec<T> where T: Clone,",
+                        "methods": []
                     }
                 ]
             }

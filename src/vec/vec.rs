@@ -1,7 +1,7 @@
 // Source: https://doc.rust-lang.org/src/alloc/vec/mod.rs.html
 
 use std::{
-    borrow::Cow,
+    borrow::{Borrow, BorrowMut, Cow},
     cmp::Ordering,
     collections::TryReserveError,
     fmt::{self, Debug, Formatter},
@@ -1184,7 +1184,10 @@ impl<T> DerefMut for Vec<T> {
     }
 }
 
-impl<T: Clone> Clone for Vec<T> {
+impl<T> Clone for Vec<T>
+where
+    T: Clone,
+{
     fn clone(&self) -> Vec<T> {
         Vec {
             base: self.base.clone(),
@@ -1196,7 +1199,10 @@ impl<T: Clone> Clone for Vec<T> {
     }
 }
 
-impl<T: Hash> Hash for Vec<T> {
+impl<T> Hash for Vec<T>
+where
+    T: Hash,
+{
     #[inline]
     fn hash<H: Hasher>(&self, state: &mut H) {
         self.base.hash(state)
@@ -1288,24 +1294,33 @@ impl<'a, T: Copy + 'a> Extend<&'a T> for Vec<T> {
     }
 }
 
-impl<T: PartialEq> PartialEq for Vec<T> {
+impl<T> PartialEq for Vec<T>
+where
+    T: PartialEq,
+{
     fn eq(&self, other: &Self) -> bool {
         self.base == other.base
     }
 }
 
 /// Implements comparison of vectors, [lexicographically](core::cmp::Ord#lexicographical-comparison).
-impl<T: PartialOrd> PartialOrd for Vec<T> {
+impl<T> PartialOrd for Vec<T>
+where
+    T: PartialOrd,
+{
     #[inline]
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         self.base.partial_cmp(&other.base)
     }
 }
 
-impl<T: Eq> Eq for Vec<T> {}
+impl<T> Eq for Vec<T> where T: Eq {}
 
 /// Implements ordering of vectors, [lexicographically](core::cmp::Ord#lexicographical-comparison).
-impl<T: Ord> Ord for Vec<T> {
+impl<T> Ord for Vec<T>
+where
+    T: Ord,
+{
     #[inline]
     fn cmp(&self, other: &Self) -> Ordering {
         self.base.cmp(&other.base)
@@ -1319,26 +1334,17 @@ impl<T> Default for Vec<T> {
     }
 }
 
-impl<T: Debug> Debug for Vec<T> {
+impl<T> Debug for Vec<T>
+where
+    T: Debug,
+{
     fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
         self.base.fmt(f)
     }
 }
 
-impl<T> AsRef<Vec<T>> for Vec<T> {
-    fn as_ref(&self) -> &Vec<T> {
-        self
-    }
-}
-
 impl<T> AsMut<Vec<T>> for Vec<T> {
     fn as_mut(&mut self) -> &mut Vec<T> {
-        self
-    }
-}
-
-impl<T> AsRef<[T]> for Vec<T> {
-    fn as_ref(&self) -> &[T] {
         self
     }
 }
@@ -1349,7 +1355,34 @@ impl<T> AsMut<[T]> for Vec<T> {
     }
 }
 
-impl<T: Clone> From<&[T]> for Vec<T> {
+impl<T> AsRef<Vec<T>> for Vec<T> {
+    fn as_ref(&self) -> &Vec<T> {
+        self
+    }
+}
+
+impl<T> AsRef<[T]> for Vec<T> {
+    fn as_ref(&self) -> &[T] {
+        self
+    }
+}
+
+impl<T> Borrow<[T]> for Vec<T> {
+    fn borrow(&self) -> &[T] {
+        self.base.borrow()
+    }
+}
+
+impl<T> BorrowMut<[T]> for Vec<T> {
+    fn borrow_mut(&mut self) -> &mut [T] {
+        self.base.borrow_mut()
+    }
+}
+
+impl<T> From<&[T]> for Vec<T>
+where
+    T: Clone,
+{
     /// Allocate a `Vec<T>` and fill it by cloning `s`'s items.
     ///
     /// # Examples
@@ -1362,7 +1395,10 @@ impl<T: Clone> From<&[T]> for Vec<T> {
     }
 }
 
-impl<T: Clone> From<&mut [T]> for Vec<T> {
+impl<T> From<&mut [T]> for Vec<T>
+where
+    T: Clone,
+{
     /// Allocate a `Vec<T>` and fill it by cloning `s`'s items.
     ///
     /// # Examples
