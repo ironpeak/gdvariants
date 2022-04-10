@@ -485,7 +485,7 @@
                             },
                             {
                                 "name": "fn ne(&self, other: &Vec<U, A>) -> bool",
-                                "value": "fn ne(&self, other: &Vec<U>) -> bool"
+                                "value": null
                             }
                         ]
                     },
