@@ -2,11 +2,25 @@
 
 use gdnative::{
     core_types::VariantArray,
+    export::{Export, ExportInfo},
     prelude::{FromVariant, FromVariantError, OwnedToVariant, ToVariant, Variant},
 };
 
 pub struct Vec<T> {
     pub(crate) base: std::vec::Vec<T>,
+}
+
+pub enum NoHint {}
+
+impl<T> Export for Vec<T>
+where
+    T: ToVariant,
+{
+    type Hint = NoHint;
+
+    fn export_info(_hint: Option<Self::Hint>) -> ExportInfo {
+        ExportInfo::new(gdnative::core_types::VariantType::VariantArray)
+    }
 }
 
 impl<T> FromVariant for Vec<T>

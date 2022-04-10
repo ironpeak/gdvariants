@@ -17,6 +17,7 @@ use std::{
 
 use gdnative::{
     core_types::Dictionary,
+    export::{Export, ExportInfo},
     prelude::{FromVariant, FromVariantError, OwnedToVariant, ToVariant, ToVariantEq, Variant},
 };
 
@@ -208,6 +209,20 @@ use gdnative::{
 /// ```
 pub struct HashMap<K, V, S = RandomState> {
     base: std::collections::HashMap<K, V, S>,
+}
+
+pub enum NoHint {}
+
+impl<K, V> Export for HashMap<K, V>
+where
+    K: ToVariantEq + ToVariant,
+    V: ToVariant,
+{
+    type Hint = NoHint;
+
+    fn export_info(_hint: Option<Self::Hint>) -> ExportInfo {
+        ExportInfo::new(gdnative::core_types::VariantType::Dictionary)
+    }
 }
 
 impl<K, V, S> FromVariant for HashMap<K, V, S>

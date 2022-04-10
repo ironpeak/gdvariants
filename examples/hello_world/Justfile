@@ -1,0 +1,10 @@
+build:
+    #!/bin/bash
+    cargo build
+
+run scene: build
+    #!/bin/bash
+    (
+        cd godot;
+        godot {{scene}}.tscn --debug --verbose
+    )  
