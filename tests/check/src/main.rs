@@ -120,10 +120,15 @@ fn overwrite(
                 let mut new_methods = Vec::new();
                 for method in methods {
                     let new_method = match overwrite.methods.iter().find(|&x| &x.name == method) {
-                        Some(overwrite) => &overwrite.value,
-                        None => method,
+                        Some(overwrite) => overwrite.value.clone(),
+                        None => Some(method.to_string()),
                     };
-                    new_methods.push(new_method.to_string());
+                    match new_method {
+                        Some(new_method) => {
+                            new_methods.push(new_method.to_string());
+                        }
+                        None => continue,
+                    }
                 }
                 Some((new_name.to_string(), new_methods))
             }

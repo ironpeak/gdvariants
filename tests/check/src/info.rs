@@ -39,7 +39,7 @@ pub struct Overwrite {
 #[serde(rename_all = "camelCase")]
 pub struct Method {
     pub name: String,
-    pub value: String,
+    pub value: Option<String>,
 }
 
 pub fn get_info(filename: &str) -> Info {
