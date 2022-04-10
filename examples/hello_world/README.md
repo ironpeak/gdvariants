@@ -17,8 +17,8 @@ Terminal:
 $ just run hashmap
 # ... godot debug messages
 HashMap:
-Hello, Player0!
-Hello, Player1!
+Hello, 0 - Player0!
+Hello, 1 - Player1!
 Hello, world!
 ~~~
 
