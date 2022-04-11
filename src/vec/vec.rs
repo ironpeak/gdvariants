@@ -1,5 +1,7 @@
 // Source: https://doc.rust-lang.org/src/alloc/vec/mod.rs.html
 
+use std::borrow::{Borrow, BorrowMut};
+
 use gdnative::{
     core_types::VariantArray,
     export::{Export, ExportInfo},
@@ -48,5 +50,17 @@ where
             array.push(value.to_variant());
         }
         array.owned_to_variant()
+    }
+}
+
+impl<T> Borrow<std::vec::Vec<T>> for Vec<T> {
+    fn borrow(&self) -> &std::vec::Vec<T> {
+        &self.base
+    }
+}
+
+impl<T> BorrowMut<std::vec::Vec<T>> for Vec<T> {
+    fn borrow_mut(&mut self) -> &mut std::vec::Vec<T> {
+        &mut self.base
     }
 }
