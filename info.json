@@ -6,14 +6,7 @@
             "docs": {
                 "std": "https://doc.rust-lang.org/std/collections/struct.HashMap.html",
                 "local": "collections/struct.HashMap.html",
-                "overwrites": [
-                    {
-                        "type": "trait",
-                        "name": "impl<'a, K, V, S> Extend<(&'a K, &'a V)> for HashMap<K, V, S> where K: Eq + Hash + Copy, V: Copy, S: BuildHasher,",
-                        "value": null,
-                        "methods": []
-                    }
-                ]
+                "overwrites": []
             }
         },
         {
