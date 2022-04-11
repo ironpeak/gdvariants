@@ -18,15 +18,14 @@ where
     }
 }
 
-// TODO
-// impl<'a, K, V, S> Extend<(&'a K, &'a V)> for HashMap<K, V, S>
-// where
-//     K: Eq + Hash + Copy,
-//     V: Copy,
-//     S: BuildHasher,
-// {
-//     #[inline]
-//     fn extend<T: IntoIterator<Item = (&'a K, &'a V)>>(&mut self, iter: T) {
-//         self.base.extend(iter)
-//     }
-// }
+impl<'a, K, V, S> Extend<(&'a K, &'a V)> for HashMap<K, V, S>
+where
+    K: Eq + Hash + Copy,
+    V: Copy,
+    S: BuildHasher,
+{
+    #[inline]
+    fn extend<T: IntoIterator<Item = (&'a K, &'a V)>>(&mut self, iter: T) {
+        self.extend(iter.into_iter().map(|(&key, &value)| (key, value)));
+    }
+}
