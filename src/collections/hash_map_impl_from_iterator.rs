@@ -12,7 +12,7 @@ where
 {
     #[inline]
     fn from_iter<T: IntoIterator<Item = (K, V)>>(iter: T) -> HashMap<K, V, S> {
-        let mut map = HashMap::with_hasher(Default::default());
+        let mut map = HashMap::with_hasher(S::default());
         map.extend(iter);
         map
     }

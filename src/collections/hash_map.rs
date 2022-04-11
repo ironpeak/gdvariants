@@ -2,6 +2,7 @@
 
 use std::{
     self,
+    borrow::{Borrow, BorrowMut},
     collections::hash_map::RandomState,
     hash::{BuildHasher, Hash},
 };
@@ -225,7 +226,7 @@ where
     fn from_variant(variant: &Variant) -> Result<Self, FromVariantError> {
         let dictionary = Dictionary::from_variant(variant)?;
         let mut hash_map: HashMap<K, V, S> =
-            HashMap::with_capacity_and_hasher(dictionary.len() as usize, Default::default());
+            HashMap::with_capacity_and_hasher(dictionary.len() as usize, S::default());
         for (variant_key, variant_value) in dictionary.iter() {
             let key = K::from_variant(&variant_key)?;
             let value = V::from_variant(&variant_value)?;
@@ -246,5 +247,17 @@ where
             dictionary.insert(key, value);
         }
         dictionary.owned_to_variant()
+    }
+}
+
+impl<K, V> Borrow<std::collections::HashMap<K, V>> for HashMap<K, V> {
+    fn borrow(&self) -> &std::collections::HashMap<K, V> {
+        &self.base
+    }
+}
+
+impl<K, V> BorrowMut<std::collections::HashMap<K, V>> for HashMap<K, V> {
+    fn borrow_mut(&mut self) -> &mut std::collections::HashMap<K, V> {
+        &mut self.base
     }
 }
