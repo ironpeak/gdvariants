@@ -170,6 +170,7 @@ impl<T> Vec<T> {
     /// vec.reserve(10);
     /// assert!(vec.capacity() >= 11);
     /// ```
+    #[inline]
     pub fn reserve(&mut self, additional: usize) {
         self.base.reserve(additional)
     }
@@ -196,6 +197,7 @@ impl<T> Vec<T> {
     /// vec.reserve_exact(10);
     /// assert!(vec.capacity() >= 11);
     /// ```
+    #[inline]
     pub fn reserve_exact(&mut self, additional: usize) {
         self.base.reserve_exact(additional)
     }
@@ -231,6 +233,7 @@ impl<T> Vec<T> {
     /// }
     /// # process_data(&[1, 2, 3]).expect("why is the test harness OOMing on 12 bytes?");
     /// ```
+    #[inline]
     pub fn try_reserve(&mut self, additional: usize) -> Result<(), TryReserveError> {
         self.base.try_reserve(additional)
     }
@@ -272,6 +275,7 @@ impl<T> Vec<T> {
     /// }
     /// # process_data(&[1, 2, 3]).expect("why is the test harness OOMing on 12 bytes?");
     /// ```
+    #[inline]
     pub fn try_reserve_exact(&mut self, additional: usize) -> Result<(), TryReserveError> {
         self.base.try_reserve_exact(additional)
     }
@@ -290,6 +294,7 @@ impl<T> Vec<T> {
     /// vec.shrink_to_fit();
     /// assert!(vec.capacity() >= 3);
     /// ```
+    #[inline]
     pub fn shrink_to_fit(&mut self) {
         self.base.shrink_to_fit()
     }
@@ -312,6 +317,7 @@ impl<T> Vec<T> {
     /// vec.shrink_to(0);
     /// assert!(vec.capacity() >= 3);
     /// ```
+    #[inline]
     pub fn shrink_to(&mut self, min_capacity: usize) {
         self.base.shrink_to(min_capacity)
     }
@@ -340,6 +346,7 @@ impl<T> Vec<T> {
     /// let slice = vec.into_boxed_slice();
     /// assert_eq!(slice.into_vec().capacity(), 3);
     /// ```
+    #[inline]
     pub fn into_boxed_slice(self) -> Box<[T]> {
         self.base.into_boxed_slice()
     }
@@ -386,6 +393,7 @@ impl<T> Vec<T> {
     ///
     /// [`clear`]: Vec::clear
     /// [`drain`]: Vec::drain
+    #[inline]
     pub fn truncate(&mut self, len: usize) {
         self.base.truncate(len)
     }
@@ -609,6 +617,7 @@ impl<T> Vec<T> {
     /// vec.insert(4, 5);
     /// assert_eq!(vec, [1, 4, 2, 3, 5]);
     /// ```
+    #[inline]
     pub fn insert(&mut self, index: usize, element: T) {
         self.base.insert(index, element)
     }
@@ -633,6 +642,7 @@ impl<T> Vec<T> {
     /// assert_eq!(v.remove(1), 2);
     /// assert_eq!(v, [1, 3]);
     /// ```
+    #[inline]
     #[track_caller]
     pub fn remove(&mut self, index: usize) -> T {
         self.base.remove(index)
@@ -662,6 +672,7 @@ impl<T> Vec<T> {
     /// vec.retain(|_| *iter.next().unwrap());
     /// assert_eq!(vec, [2, 3, 5]);
     /// ```
+    #[inline]
     pub fn retain<F>(&mut self, f: F)
     where
         F: FnMut(&T) -> bool,
@@ -710,6 +721,7 @@ impl<T> Vec<T> {
     ///
     /// assert_eq!(vec, ["foo", "bar", "baz", "bar"]);
     /// ```
+    #[inline]
     pub fn dedup_by<F>(&mut self, same_bucket: F)
     where
         F: FnMut(&mut T, &mut T) -> bool,
@@ -795,6 +807,7 @@ impl<T> Vec<T> {
     /// v.drain(..);
     /// assert_eq!(v, &[]);
     /// ```
+    #[inline]
     pub fn drain<R>(&mut self, range: R) -> Drain<'_, T>
     where
         R: RangeBounds<usize>,
@@ -846,6 +859,7 @@ impl<T> Vec<T> {
     /// v.push(1);
     /// assert!(!v.is_empty());
     /// ```
+    #[inline]
     pub fn is_empty(&self) -> bool {
         self.base.is_empty()
     }
@@ -902,6 +916,7 @@ impl<T> Vec<T> {
     /// vec.resize_with(4, || { p *= 2; p });
     /// assert_eq!(vec, [2, 4, 8, 16]);
     /// ```
+    #[inline]
     pub fn resize_with<F>(&mut self, new_len: usize, f: F)
     where
         F: FnMut() -> T,
@@ -1039,6 +1054,7 @@ where
     /// vec.resize(2, 0);
     /// assert_eq!(vec, [1, 2]);
     /// ```
+    #[inline]
     pub fn resize(&mut self, new_len: usize, value: T) {
         self.base.resize(new_len, value)
     }
@@ -1062,6 +1078,7 @@ where
     /// ```
     ///
     /// [`extend`]: Vec::extend
+    #[inline]
     pub fn extend_from_slice(&mut self, other: &[T]) {
         self.base.extend_from_slice(other)
     }
@@ -1087,6 +1104,7 @@ where
     /// vec.extend_from_within(4..8);
     /// assert_eq!(vec, [0, 1, 2, 3, 4, 2, 3, 4, 0, 1, 4, 2, 3, 4]);
     /// ```
+    #[inline]
     pub fn extend_from_within<R>(&mut self, src: R)
     where
         R: RangeBounds<usize>,
