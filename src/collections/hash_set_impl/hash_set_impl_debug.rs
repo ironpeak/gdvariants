@@ -1,11 +1,12 @@
-use std::{
-    borrow::Borrow,
-    collections::{
-        hash_map::RandomState,
-        hash_set::{Difference, Drain, Intersection, IntoIter, Iter, SymmetricDifference, Union},
-        TryReserveError,
-    },
-    fmt,
-    hash::{BuildHasher, Hash},
-    ops::{BitAnd, BitOr, BitXor, Sub},
-};
+use std::fmt::{Debug, Formatter, Result};
+
+use crate::collections::HashSet;
+
+impl<T, S> Debug for HashSet<T, S>
+where
+    T: Debug,
+{
+    fn fmt(&self, f: &mut Formatter<'_>) -> Result {
+        f.debug_set().entries(self.iter()).finish()
+    }
+}

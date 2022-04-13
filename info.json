@@ -10,6 +10,14 @@
             }
         },
         {
+            "name": "HashSet",
+            "docs": {
+                "std": "https://doc.rust-lang.org/std/collections/struct.HashSet.html",
+                "local": "collections/struct.HashSet.html",
+                "overwrites": []
+            }
+        },
+        {
             "name": "Vec",
             "docs": {
                 "std": "https://doc.rust-lang.org/std/vec/struct.Vec.html",

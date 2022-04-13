@@ -2,12 +2,10 @@ use std::{
     borrow::Borrow,
     collections::{
         hash_map::RandomState,
-        hash_set::{Difference, Drain, Intersection, IntoIter, Iter, SymmetricDifference, Union},
+        hash_set::{Difference, Drain, Intersection, Iter, SymmetricDifference, Union},
         TryReserveError,
     },
-    fmt,
     hash::{BuildHasher, Hash},
-    ops::{BitAnd, BitOr, BitXor, Sub},
 };
 
 use crate::collections::HashSet;
@@ -21,7 +19,7 @@ impl<T> HashSet<T, RandomState> {
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashSet;
+    /// use gdvariants::collections::HashSet;
     /// let set: HashSet<i32> = HashSet::new();
     /// ```
     #[inline]
@@ -38,7 +36,7 @@ impl<T> HashSet<T, RandomState> {
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashSet;
+    /// use gdvariants::collections::HashSet;
     /// let set: HashSet<i32> = HashSet::with_capacity(10);
     /// assert!(set.capacity() >= 10);
     /// ```
@@ -57,7 +55,7 @@ impl<T, S> HashSet<T, S> {
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashSet;
+    /// use gdvariants::collections::HashSet;
     /// let set: HashSet<i32> = HashSet::with_capacity(100);
     /// assert!(set.capacity() >= 100);
     /// ```
@@ -72,7 +70,7 @@ impl<T, S> HashSet<T, S> {
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashSet;
+    /// use gdvariants::collections::HashSet;
     /// let mut set = HashSet::new();
     /// set.insert("a");
     /// set.insert("b");
@@ -92,7 +90,7 @@ impl<T, S> HashSet<T, S> {
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashSet;
+    /// use gdvariants::collections::HashSet;
     ///
     /// let mut v = HashSet::new();
     /// assert_eq!(v.len(), 0);
@@ -109,7 +107,7 @@ impl<T, S> HashSet<T, S> {
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashSet;
+    /// use gdvariants::collections::HashSet;
     ///
     /// let mut v = HashSet::new();
     /// assert!(v.is_empty());
@@ -131,7 +129,7 @@ impl<T, S> HashSet<T, S> {
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashSet;
+    /// use gdvariants::collections::HashSet;
     ///
     /// let mut set = HashSet::from([1, 2, 3]);
     /// assert!(!set.is_empty());
@@ -156,7 +154,7 @@ impl<T, S> HashSet<T, S> {
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashSet;
+    /// use gdvariants::collections::HashSet;
     ///
     /// let mut set = HashSet::from([1, 2, 3, 4, 5, 6]);
     /// set.retain(|&k| k % 2 == 0);
@@ -175,7 +173,7 @@ impl<T, S> HashSet<T, S> {
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashSet;
+    /// use gdvariants::collections::HashSet;
     ///
     /// let mut v = HashSet::new();
     /// v.insert(1);
@@ -203,7 +201,7 @@ impl<T, S> HashSet<T, S> {
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashSet;
+    /// use gdvariants::collections::HashSet;
     /// use std::collections::hash_map::RandomState;
     ///
     /// let s = RandomState::new();
@@ -234,7 +232,7 @@ impl<T, S> HashSet<T, S> {
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashSet;
+    /// use gdvariants::collections::HashSet;
     /// use std::collections::hash_map::RandomState;
     ///
     /// let s = RandomState::new();
@@ -253,7 +251,7 @@ impl<T, S> HashSet<T, S> {
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashSet;
+    /// use gdvariants::collections::HashSet;
     /// use std::collections::hash_map::RandomState;
     ///
     /// let hasher = RandomState::new();
@@ -282,7 +280,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashSet;
+    /// use gdvariants::collections::HashSet;
     /// let mut set: HashSet<i32> = HashSet::new();
     /// set.reserve(10);
     /// assert!(set.capacity() >= 10);
@@ -304,7 +302,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashSet;
+    /// use gdvariants::collections::HashSet;
     /// let mut set: HashSet<i32> = HashSet::new();
     /// set.try_reserve(10).expect("why is the test harness OOMing on 10 bytes?");
     /// ```
@@ -320,7 +318,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashSet;
+    /// use gdvariants::collections::HashSet;
     ///
     /// let mut set = HashSet::with_capacity(100);
     /// set.insert(1);
@@ -342,7 +340,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashSet;
+    /// use gdvariants::collections::HashSet;
     ///
     /// let mut set = HashSet::with_capacity(100);
     /// set.insert(1);
@@ -364,7 +362,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashSet;
+    /// use gdvariants::collections::HashSet;
     /// let a = HashSet::from([1, 2, 3]);
     /// let b = HashSet::from([4, 2, 3, 4]);
     ///
@@ -392,7 +390,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashSet;
+    /// use gdvariants::collections::HashSet;
     /// let a = HashSet::from([1, 2, 3]);
     /// let b = HashSet::from([4, 2, 3, 4]);
     ///
@@ -421,7 +419,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashSet;
+    /// use gdvariants::collections::HashSet;
     /// let a = HashSet::from([1, 2, 3]);
     /// let b = HashSet::from([4, 2, 3, 4]);
     ///
@@ -444,7 +442,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashSet;
+    /// use gdvariants::collections::HashSet;
     /// let a = HashSet::from([1, 2, 3]);
     /// let b = HashSet::from([4, 2, 3, 4]);
     ///
@@ -470,7 +468,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashSet;
+    /// use gdvariants::collections::HashSet;
     ///
     /// let set = HashSet::from([1, 2, 3]);
     /// assert_eq!(set.contains(&1), true);
@@ -494,7 +492,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashSet;
+    /// use gdvariants::collections::HashSet;
     ///
     /// let set = HashSet::from([1, 2, 3]);
     /// assert_eq!(set.get(&2), Some(&2));
@@ -515,7 +513,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashSet;
+    /// use gdvariants::collections::HashSet;
     ///
     /// let a = HashSet::from([1, 2, 3]);
     /// let mut b = HashSet::new();
@@ -537,7 +535,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashSet;
+    /// use gdvariants::collections::HashSet;
     ///
     /// let sup = HashSet::from([1, 2, 3]);
     /// let mut set = HashSet::new();
@@ -563,7 +561,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashSet;
+    /// use gdvariants::collections::HashSet;
     ///
     /// let sub = HashSet::from([1, 2]);
     /// let mut set = HashSet::new();
@@ -591,7 +589,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashSet;
+    /// use gdvariants::collections::HashSet;
     ///
     /// let mut set = HashSet::new();
     ///
@@ -610,7 +608,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashSet;
+    /// use gdvariants::collections::HashSet;
     ///
     /// let mut set = HashSet::new();
     /// set.insert(Vec::<i32>::new());
@@ -634,7 +632,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashSet;
+    /// use gdvariants::collections::HashSet;
     ///
     /// let mut set = HashSet::new();
     ///
@@ -660,7 +658,7 @@ where
     /// # Examples
     ///
     /// ```
-    /// use std::collections::HashSet;
+    /// use gdvariants::collections::HashSet;
     ///
     /// let mut set = HashSet::from([1, 2, 3]);
     /// assert_eq!(set.take(&2), Some(2));

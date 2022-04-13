@@ -1,11 +1,14 @@
-use std::{
-    borrow::Borrow,
-    collections::{
-        hash_map::RandomState,
-        hash_set::{Difference, Drain, Intersection, IntoIter, Iter, SymmetricDifference, Union},
-        TryReserveError,
-    },
-    fmt,
-    hash::{BuildHasher, Hash},
-    ops::{BitAnd, BitOr, BitXor, Sub},
-};
+use crate::collections::HashSet;
+
+impl<T, S> Default for HashSet<T, S>
+where
+    S: Default,
+{
+    /// Creates an empty `HashSet<T, S>` with the `Default` value for the hasher.
+    #[inline]
+    fn default() -> HashSet<T, S> {
+        HashSet {
+            base: Default::default(),
+        }
+    }
+}

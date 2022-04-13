@@ -1,3 +1,4 @@
+#[allow(clippy::module_inception)]
 mod hash_map_impl;
 mod hash_map_impl_clone;
 mod hash_map_impl_debug;

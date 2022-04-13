@@ -1,3 +1,4 @@
+#[allow(clippy::module_inception)]
 mod hash_set_impl;
 mod hash_set_impl_bit_and;
 mod hash_set_impl_bit_or;
