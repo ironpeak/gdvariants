@@ -1,3 +1,4 @@
+#[allow(clippy::module_inception)]
 mod vec_impl;
 mod vec_impl_as_mut;
 mod vec_impl_as_ref;
