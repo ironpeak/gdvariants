@@ -9,7 +9,7 @@ where
 {
     #[inline]
     fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> HashSet<T, S> {
-        let mut set = HashSet::with_hasher(Default::default());
+        let mut set = HashSet::with_hasher(S::default());
         set.extend(iter);
         set
     }

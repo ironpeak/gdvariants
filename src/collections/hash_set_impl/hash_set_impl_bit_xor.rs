@@ -33,6 +33,8 @@ where
     /// assert_eq!(i, expected.len());
     /// ```
     fn bitxor(self, rhs: &HashSet<T, S>) -> HashSet<T, S> {
-        self.symmetric_difference(rhs).cloned().collect()
+        HashSet {
+            base: self.base.bitxor(&rhs.base),
+        }
     }
 }

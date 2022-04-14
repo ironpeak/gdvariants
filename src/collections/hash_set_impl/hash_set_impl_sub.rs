@@ -33,6 +33,8 @@ where
     /// assert_eq!(i, expected.len());
     /// ```
     fn sub(self, rhs: &HashSet<T, S>) -> HashSet<T, S> {
-        self.difference(rhs).cloned().collect()
+        HashSet {
+            base: self.base.sub(&rhs.base),
+        }
     }
 }

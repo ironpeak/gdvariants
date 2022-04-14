@@ -20,6 +20,6 @@ where
 {
     #[inline]
     fn extend<I: IntoIterator<Item = &'a T>>(&mut self, iter: I) {
-        self.extend(iter.into_iter().cloned());
+        self.base.extend(iter.into_iter().cloned());
     }
 }

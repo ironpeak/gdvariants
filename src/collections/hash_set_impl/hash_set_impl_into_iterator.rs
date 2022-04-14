@@ -38,6 +38,6 @@ impl<'a, T, S> IntoIterator for &'a HashSet<T, S> {
 
     #[inline]
     fn into_iter(self) -> Iter<'a, T> {
-        self.iter()
+        self.base.iter()
     }
 }

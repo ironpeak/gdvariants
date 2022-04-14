@@ -33,6 +33,8 @@ where
     /// assert_eq!(i, expected.len());
     /// ```
     fn bitand(self, rhs: &HashSet<T, S>) -> HashSet<T, S> {
-        self.intersection(rhs).cloned().collect()
+        HashSet {
+            base: self.base.bitand(&rhs.base),
+        }
     }
 }
