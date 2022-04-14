@@ -62,3 +62,9 @@ impl<T> BorrowMut<std::vec::Vec<T>> for Vec<T> {
         &mut self.base
     }
 }
+
+impl<T> From<std::vec::Vec<T>> for Vec<T> {
+    fn from(vec: std::vec::Vec<T>) -> Vec<T> {
+        Vec { base: vec }
+    }
+}
