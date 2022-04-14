@@ -23,6 +23,15 @@ Hello, world!
 ~~~
 
 ~~~bash
+$ just run hashmap
+# ... godot debug messages
+HashSet:
+Hello, Player0!
+Hello, Player1!
+Hello, world!
+~~~
+
+~~~bash
 $ just run vec
 # ... godot debug messages
 Vec:

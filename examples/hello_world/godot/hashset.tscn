@@ -3,13 +3,10 @@
 [ext_resource path="res://rust.gdnlib" type="GDNativeLibrary" id=1]
 
 [sub_resource type="NativeScript" id=1]
-resource_name = "ExampleHashMapProperty"
-class_name = "ExampleHashMapProperty"
+resource_name = "ExampleHashSetProperty"
+class_name = "ExampleHashSetProperty"
 library = ExtResource( 1 )
 
-[node name="HashMap" type="Node2D"]
+[node name="HashSet" type="Node2D"]
 script = SubResource( 1 )
-players = {
-0: "Player0",
-1: "Player1"
-}
+players = [ "Player0", "Player0", "Player1" ]
