@@ -14,6 +14,8 @@ impl<T> AsMut<[T]> for Vec<T> {
 
 #[cfg(test)]
 mod tests {
+    use crate::vec::Vec;
+
     #[test]
     fn test_as_mut_vec() {
         let mut stdvec = vec![2, 1, 3];
