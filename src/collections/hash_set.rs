@@ -154,3 +154,9 @@ impl<T, S> BorrowMut<std::collections::HashSet<T, S>> for HashSet<T, S> {
         &mut self.base
     }
 }
+
+impl<T> From<std::collections::HashSet<T>> for HashSet<T> {
+    fn from(set: std::collections::HashSet<T>) -> HashSet<T> {
+        HashSet { base: set }
+    }
+}

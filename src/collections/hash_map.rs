@@ -259,3 +259,9 @@ impl<K, V> BorrowMut<std::collections::HashMap<K, V>> for HashMap<K, V> {
         &mut self.base
     }
 }
+
+impl<K, V> From<std::collections::HashMap<K, V>> for HashMap<K, V> {
+    fn from(map: std::collections::HashMap<K, V>) -> HashMap<K, V> {
+        HashMap { base: map }
+    }
+}
