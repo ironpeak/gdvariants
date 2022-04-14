@@ -575,7 +575,7 @@ where
     /// ```
     #[inline]
     pub fn is_superset(&self, other: &HashSet<T, S>) -> bool {
-        self.base.is_subset(&other.base)
+        self.base.is_superset(&other.base)
     }
 
     /// Adds a value to the set.
