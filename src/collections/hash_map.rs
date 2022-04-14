@@ -1,5 +1,3 @@
-// Source: https://doc.rust-lang.org/src/std/collections/hash/map.rs.html
-
 use std::{
     self,
     borrow::{Borrow, BorrowMut},

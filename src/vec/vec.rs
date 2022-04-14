@@ -1,5 +1,3 @@
-// Source: https://doc.rust-lang.org/src/alloc/vec/mod.rs.html
-
 use std::borrow::{Borrow, BorrowMut};
 
 use gdnative::{
