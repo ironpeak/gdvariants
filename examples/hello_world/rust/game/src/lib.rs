@@ -6,6 +6,7 @@ mod nodes;
 fn init(handle: InitHandle) {
     // Register the new `HelloWorld` type we just declared.
     handle.add_class::<nodes::ExampleHashMapProperty>();
+    handle.add_class::<nodes::ExampleHashSetProperty>();
     handle.add_class::<nodes::ExampleVecProperty>();
 }
 
