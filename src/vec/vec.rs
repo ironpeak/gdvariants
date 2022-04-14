@@ -68,3 +68,28 @@ impl<T> From<std::vec::Vec<T>> for Vec<T> {
         Vec { base: vec }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use std::ops::*;
+    use std::vec::*;
+
+    macro_rules! __test_method {
+        ($name:ident, [$($args:tt)*]) => {
+            paste::item! {
+                #[test]
+                fn [< test_ $name >] () {
+                    let stdvec = vec![2, 1, 3];
+                    let cratevec = Vec::from(vec![2, 1, 3]);
+
+                    let stdres = stdvec.[< $name >]($($args)*);
+                    let crateres = cratevec.[< $name >]($($args)*);
+
+                    assert_eq!(stdres, crateres);
+                }
+            }
+        };
+    }
+
+    __test_method!(index, [0]);
+}
