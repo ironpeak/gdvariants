@@ -25,7 +25,9 @@ impl<T> HashSet<T, RandomState> {
     #[inline]
     #[must_use]
     pub fn new() -> HashSet<T, RandomState> {
-        Default::default()
+        HashSet {
+            base: std::collections::HashSet::new(),
+        }
     }
 
     /// Creates an empty `HashSet` with the specified capacity.
@@ -548,11 +550,7 @@ where
     /// ```
     #[inline]
     pub fn is_subset(&self, other: &HashSet<T, S>) -> bool {
-        if self.len() <= other.len() {
-            self.iter().all(|v| other.contains(v))
-        } else {
-            false
-        }
+        self.base.is_subset(&other.base)
     }
 
     /// Returns `true` if the set is a superset of another,
@@ -577,7 +575,7 @@ where
     /// ```
     #[inline]
     pub fn is_superset(&self, other: &HashSet<T, S>) -> bool {
-        other.is_subset(self)
+        self.base.is_subset(&other.base)
     }
 
     /// Adds a value to the set.

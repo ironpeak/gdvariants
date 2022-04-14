@@ -7,6 +7,6 @@ where
     T: Debug,
 {
     fn fmt(&self, f: &mut Formatter<'_>) -> Result {
-        f.debug_set().entries(self.iter()).finish()
+        self.base.fmt(f)
     }
 }

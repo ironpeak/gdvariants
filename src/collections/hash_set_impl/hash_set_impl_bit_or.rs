@@ -33,6 +33,8 @@ where
     /// assert_eq!(i, expected.len());
     /// ```
     fn bitor(self, rhs: &HashSet<T, S>) -> HashSet<T, S> {
-        self.union(rhs).cloned().collect()
+        HashSet {
+            base: self.base.bitor(&rhs.base),
+        }
     }
 }

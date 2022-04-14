@@ -8,10 +8,6 @@ where
     S: BuildHasher,
 {
     fn eq(&self, other: &HashSet<T, S>) -> bool {
-        if self.len() != other.len() {
-            return false;
-        }
-
-        self.iter().all(|key| other.contains(key))
+        self.base.eq(&other.base)
     }
 }
