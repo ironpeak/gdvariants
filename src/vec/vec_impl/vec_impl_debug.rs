@@ -9,3 +9,19 @@ where
         self.base.fmt(f)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::vec::Vec;
+
+    #[test]
+    fn test_debug_vec() {
+        let stdvec = vec![2, 1, 3];
+        let cratevec = Vec::from(vec![2, 1, 3]);
+
+        let stdres = format!("{:?}", &stdvec);
+        let crateres = format!("{:?}", &cratevec);
+
+        assert_eq!(stdres, crateres);
+    }
+}

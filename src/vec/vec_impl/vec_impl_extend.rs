@@ -27,3 +27,19 @@ where
         self.base.extend(iter)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::vec::Vec;
+
+    #[test]
+    fn test_extend_vec() {
+        let mut stdvec = vec![2, 1, 3];
+        let mut cratevec = Vec::from(vec![2, 1, 3]);
+
+        stdvec.extend([1, 2, 3]);
+        cratevec.extend([1, 2, 3]);
+
+        assert_eq!(stdvec, cratevec);
+    }
+}

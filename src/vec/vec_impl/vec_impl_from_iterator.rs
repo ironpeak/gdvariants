@@ -8,3 +8,16 @@ impl<T> FromIterator<T> for Vec<T> {
         vec
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::vec::Vec;
+
+    #[test]
+    fn test_borrow_vec() {
+        let stdvec = std::vec::Vec::from_iter([2, 1, 3]);
+        let cratevec = Vec::from_iter([2, 1, 3]);
+
+        assert_eq!(stdvec, cratevec);
+    }
+}
