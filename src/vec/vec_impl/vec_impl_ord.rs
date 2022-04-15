@@ -12,3 +12,16 @@ where
         self.base.cmp(&other.base)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::vec::Vec;
+
+    #[test]
+    fn test_cmp() {
+        let stdvec = vec![2, 1, 3];
+        let cratevec = Vec::from(vec![2, 1, 3]);
+
+        assert_eq!(stdvec.cmp(&stdvec), cratevec.cmp(&cratevec));
+    }
+}

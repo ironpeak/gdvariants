@@ -12,3 +12,18 @@ where
         self.base.index(index)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use std::ops::Index;
+
+    use crate::vec::Vec;
+
+    #[test]
+    fn test_index() {
+        let stdvec = vec![2, 1, 3];
+        let cratevec = Vec::from(vec![2, 1, 3]);
+
+        assert_eq!(stdvec.index(1), cratevec.index(1));
+    }
+}

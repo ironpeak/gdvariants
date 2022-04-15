@@ -35,3 +35,51 @@ impl Write for Vec<u8> {
         self
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use std::io::{IoSlice, Write};
+
+    use crate::vec::Vec;
+
+    #[test]
+    fn test_write() {
+        let mut stdvec: std::vec::Vec<u8> = vec![2, 1, 3];
+        let mut cratevec: Vec<u8> = Vec::from(vec![2, 1, 3]);
+
+        assert_eq!(
+            stdvec.write(b"hello, world!").unwrap(),
+            cratevec.write(b"hello, world!").unwrap()
+        );
+
+        assert_eq!(stdvec, cratevec);
+    }
+
+    #[test]
+    fn test_write_vectored() {
+        let mut stdvec: std::vec::Vec<u8> = vec![2, 1, 3];
+        let mut cratevec: Vec<u8> = Vec::from(vec![2, 1, 3]);
+
+        assert_eq!(
+            stdvec.write_vectored(&[IoSlice::new(&[2, 1, 3])]).unwrap(),
+            cratevec
+                .write_vectored(&[IoSlice::new(&[2, 1, 3])])
+                .unwrap()
+        );
+
+        assert_eq!(stdvec, cratevec);
+    }
+
+    #[test]
+    fn test_write_all() {
+        let mut stdvec: std::vec::Vec<u8> = vec![2, 1, 3];
+        let mut cratevec: Vec<u8> = Vec::from(vec![2, 1, 3]);
+
+        assert_eq!(
+            stdvec.write_all(b"hello, world!").unwrap(),
+            cratevec.write_all(b"hello, world!").unwrap()
+        );
+
+        assert_eq!(stdvec, cratevec);
+    }
+}
