@@ -14,7 +14,7 @@ mod tests {
     use crate::vec::Vec;
 
     #[test]
-    fn test_borrow_vec() {
+    fn test_from_iter() {
         let stdvec = std::vec::Vec::from_iter([2, 1, 3]);
         let cratevec = Vec::from_iter([2, 1, 3]);
 
