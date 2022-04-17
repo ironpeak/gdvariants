@@ -82,4 +82,37 @@ mod tests {
 
         assert_eq!(stdvec, cratevec);
     }
+
+    #[test]
+    fn test_write_fmt() {
+        let mut stdvec: std::vec::Vec<u8> = vec![2, 1, 3];
+        let mut cratevec: Vec<u8> = Vec::from(vec![2, 1, 3]);
+
+        assert_eq!(
+            stdvec.write_fmt(format_args!("hello")).unwrap(),
+            cratevec.write_fmt(format_args!("hello")).unwrap()
+        );
+
+        assert_eq!(stdvec, cratevec);
+    }
+
+    #[test]
+    fn test_flush() {
+        let mut stdvec: std::vec::Vec<u8> = vec![2, 1, 3];
+        let mut cratevec: Vec<u8> = Vec::from(vec![2, 1, 3]);
+
+        assert_eq!(stdvec.flush().unwrap(), cratevec.flush().unwrap());
+
+        assert_eq!(stdvec, cratevec);
+    }
+
+    #[test]
+    fn test_by_ref() {
+        let mut stdvec: std::vec::Vec<u8> = vec![2, 1, 3];
+        let mut cratevec: Vec<u8> = Vec::from(vec![2, 1, 3]);
+
+        assert_eq!(stdvec.by_ref(), cratevec.by_ref());
+
+        assert_eq!(stdvec, cratevec);
+    }
 }

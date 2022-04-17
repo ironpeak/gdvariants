@@ -1136,3 +1136,75 @@ where
         self.base.dedup()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::vec::Vec;
+
+    #[test]
+    fn test_new() {
+        let stdvec: std::vec::Vec<i32> = std::vec::Vec::new();
+        let cratevec = Vec::new();
+
+        assert_eq!(stdvec, cratevec);
+    }
+
+    #[test]
+    fn test_with_capacity() {
+        let stdvec: std::vec::Vec<i32> = std::vec::Vec::with_capacity(3);
+        let cratevec = Vec::with_capacity(3);
+
+        assert_eq!(stdvec.capacity(), cratevec.capacity());
+        assert_eq!(stdvec, cratevec);
+    }
+
+    #[test]
+    fn test_reserve() {
+        let mut stdvec = vec![2, 1, 3];
+        let mut cratevec = Vec::from(vec![2, 1, 3]);
+
+        stdvec.reserve(10);
+        cratevec.reserve(10);
+
+        assert_eq!(stdvec.capacity(), cratevec.capacity());
+        assert_eq!(stdvec, cratevec);
+    }
+
+    #[test]
+    fn test_reserve_exact() {
+        let mut stdvec = vec![2, 1, 3];
+        let mut cratevec = Vec::from(vec![2, 1, 3]);
+
+        stdvec.reserve_exact(10);
+        cratevec.reserve_exact(10);
+
+        assert_eq!(stdvec.capacity(), cratevec.capacity());
+        assert_eq!(stdvec, cratevec);
+    }
+
+    #[test]
+    fn test_try_reserve() {
+        let mut stdvec = vec![2, 1, 3];
+        let mut cratevec = Vec::from(vec![2, 1, 3]);
+
+        let stdres = stdvec.try_reserve(10);
+        let crateres = cratevec.try_reserve(10);
+
+        assert_eq!(stdvec.capacity(), cratevec.capacity());
+        assert_eq!(stdres, crateres);
+        assert_eq!(stdvec, cratevec);
+    }
+
+    #[test]
+    fn test_try_reserve_exact() {
+        let mut stdvec = vec![2, 1, 3];
+        let mut cratevec = Vec::from(vec![2, 1, 3]);
+
+        let stdres = stdvec.try_reserve_exact(10);
+        let crateres = cratevec.try_reserve_exact(10);
+
+        assert_eq!(stdvec.capacity(), cratevec.capacity());
+        assert_eq!(stdres, crateres);
+        assert_eq!(stdvec, cratevec);
+    }
+}
