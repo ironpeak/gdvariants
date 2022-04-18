@@ -7,6 +7,12 @@ dry-run:
 publish:
     cargo publish
 
+cover:
+    #!/bin/bash
+    rm -rf ./coverage
+    docker build . -t gdvariants-coverage
+    docker cp $(docker create --rm gdvariants-coverage):/app/target/debug/coverage ./coverage
+
 doc:
     cargo doc --package gdvariants --no-deps --open
 

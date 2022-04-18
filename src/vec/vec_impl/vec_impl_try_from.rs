@@ -11,3 +11,24 @@ impl<T, const N: usize> TryFrom<Vec<T>> for [T; N] {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::vec::Vec;
+
+    #[test]
+    fn test_try_from_ok() {
+        let stdvec: Result<[i32; 3], std::vec::Vec<i32>> = <[i32; 3]>::try_from(vec![2, 1, 3]);
+        let cratevec: Result<[i32; 3], Vec<i32>> = <[i32; 3]>::try_from(Vec::from(vec![2, 1, 3]));
+
+        assert_eq!(stdvec.unwrap(), cratevec.unwrap());
+    }
+
+    #[test]
+    fn test_try_from_err() {
+        let stdvec: Result<[i32; 2], std::vec::Vec<i32>> = <[i32; 2]>::try_from(vec![2, 1, 3]);
+        let cratevec: Result<[i32; 2], Vec<i32>> = <[i32; 2]>::try_from(Vec::from(vec![2, 1, 3]));
+
+        assert_eq!(stdvec.unwrap_err(), cratevec.unwrap_err());
+    }
+}

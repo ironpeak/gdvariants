@@ -45,3 +45,19 @@ impl<'a, T> IntoIterator for &'a mut Vec<T> {
         self.base.iter_mut()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::vec::Vec;
+
+    #[test]
+    fn test_into_iterator() {
+        let stdvec = vec![2, 1, 3];
+        let cratevec = Vec::from(vec![2, 1, 3]);
+
+        assert_eq!(
+            stdvec.into_iter().collect::<Vec<i32>>(),
+            cratevec.into_iter().collect::<Vec<i32>>()
+        );
+    }
+}

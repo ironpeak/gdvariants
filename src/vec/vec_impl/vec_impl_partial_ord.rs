@@ -12,3 +12,16 @@ where
         self.base.partial_cmp(&other.base)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::vec::Vec;
+
+    #[test]
+    fn test_partial_cmp() {
+        let stdvec = vec![2, 1, 3];
+        let cratevec = Vec::from(vec![2, 1, 3]);
+
+        assert_eq!(stdvec.partial_cmp(&stdvec), cratevec.partial_cmp(&cratevec));
+    }
+}

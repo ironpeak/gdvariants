@@ -198,3 +198,160 @@ impl<T> From<VecDeque<T>> for Vec<T> {
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use std::{
+        collections::{BinaryHeap, VecDeque},
+        ffi::CString,
+        num::NonZeroU8,
+        rc::Rc,
+        sync::Arc,
+    };
+
+    use crate::vec::Vec;
+
+    #[test]
+    fn test_from_slice() {
+        let source = [2, 1, 3];
+
+        let stdvec = std::vec::Vec::from(&source[..]);
+        let cratevec = Vec::from(&source[..]);
+
+        assert_eq!(stdvec, cratevec);
+    }
+
+    #[test]
+    fn test_from_mut_slice() {
+        let mut source = [2, 1, 3];
+
+        let stdvec = std::vec::Vec::from(&mut source[..]);
+        let cratevec = Vec::from(&mut source[..]);
+
+        assert_eq!(stdvec, cratevec);
+    }
+
+    #[test]
+    fn test_from_array() {
+        let source: [i32; 3] = [2, 1, 3];
+
+        let stdvec = std::vec::Vec::from(source);
+        let cratevec = Vec::from(source);
+
+        assert_eq!(stdvec, cratevec);
+    }
+
+    #[test]
+    fn test_from_box_slice() {
+        let source: Box<[i32]> = Box::new([2, 1, 3]);
+
+        let stdvec = std::vec::Vec::from(source.clone());
+        let cratevec = Vec::from(source.clone());
+
+        assert_eq!(stdvec, cratevec);
+    }
+
+    #[test]
+    fn test_from_vec_to_box() {
+        let stdvec = std::vec::Vec::from([2, 1, 3]);
+        let cratevec = Vec::from([2, 1, 3]);
+
+        let stdres: Box<[i32]> = Box::from(stdvec);
+        let crateres: Box<[i32]> = Box::from(cratevec);
+
+        assert_eq!(stdres, crateres);
+    }
+
+    #[test]
+    fn test_from_str() {
+        let stdvec = std::vec::Vec::from("Hello World!");
+        let cratevec = Vec::from("Hello World!");
+
+        assert_eq!(stdvec, cratevec);
+    }
+
+    #[test]
+    fn test_from_binary_heap() {
+        let stdvec = std::vec::Vec::from(BinaryHeap::from([2, 1, 3]));
+        let cratevec = Vec::from(BinaryHeap::from([2, 1, 3]));
+
+        assert_eq!(stdvec, cratevec);
+    }
+
+    #[test]
+    fn test_from_c_string() {
+        let stdvec = std::vec::Vec::from(CString::new("Hello, world!").unwrap());
+        let cratevec = Vec::from(CString::new("Hello, world!").unwrap());
+
+        assert_eq!(stdvec, cratevec);
+    }
+
+    #[test]
+    fn test_from_string() {
+        let stdvec = std::vec::Vec::from("Hello World!".to_string());
+        let cratevec = Vec::from("Hello World!".to_string());
+
+        assert_eq!(stdvec, cratevec);
+    }
+
+    #[test]
+    fn test_from_vec_non_zero_u8_to_c_string() {
+        let stdsrc = std::vec::Vec::from(vec![
+            NonZeroU8::new(2).unwrap(),
+            NonZeroU8::new(1).unwrap(),
+            NonZeroU8::new(3).unwrap(),
+        ]);
+        let cratesrc = Vec::from(vec![
+            NonZeroU8::new(2).unwrap(),
+            NonZeroU8::new(1).unwrap(),
+            NonZeroU8::new(3).unwrap(),
+        ]);
+
+        let stdres = CString::from(stdsrc);
+        let crateres = CString::from(cratesrc);
+
+        assert_eq!(stdres, crateres);
+    }
+
+    #[test]
+    fn test_from_vec_to_vec_deque() {
+        let stdres = VecDeque::from(std::vec::Vec::from([2, 1, 3]));
+        let crateres = VecDeque::from(Vec::from([2, 1, 3]));
+
+        assert_eq!(stdres, crateres);
+    }
+
+    #[test]
+    fn test_from_vec_to_arc() {
+        let stdres: Arc<[i32]> = Arc::from(std::vec::Vec::from([2, 1, 3]));
+        let crateres: Arc<[i32]> = Arc::from(Vec::from([2, 1, 3]));
+
+        assert_eq!(stdres, crateres);
+    }
+
+    #[test]
+    fn test_from_vec_to_rc() {
+        let stdres: Rc<[i32]> = Rc::from(std::vec::Vec::from([2, 1, 3]));
+        let crateres: Rc<[i32]> = Rc::from(Vec::from([2, 1, 3]));
+
+        assert_eq!(stdres, crateres);
+    }
+
+    #[test]
+    fn test_from_vec_to_binary_heap() {
+        let stdres: Vec<i32> = BinaryHeap::from(std::vec::Vec::from([2, 1, 3]))
+            .into_iter()
+            .collect();
+        let crateres: Vec<i32> = BinaryHeap::from(Vec::from([2, 1, 3])).into_iter().collect();
+
+        assert_eq!(stdres, crateres);
+    }
+
+    #[test]
+    fn test_from_vec_deque_to_vec() {
+        let stdvec: std::vec::Vec<i32> = std::vec::Vec::from(VecDeque::from([2, 1, 3]));
+        let cratevec: Vec<i32> = Vec::from(VecDeque::from([2, 1, 3]));
+
+        assert_eq!(stdvec, cratevec);
+    }
+}
