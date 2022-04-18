@@ -15,6 +15,3 @@ include = ["src/", "LICENSE-*", "README.md", "COPYRIGHT"]
 
 [dependencies]
 gdnative = "0.10.0"
-
-[dev-dependencies]
-paste = "1"

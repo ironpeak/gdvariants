@@ -68,3 +68,24 @@ impl<T> From<std::vec::Vec<T>> for Vec<T> {
         Vec { base: vec }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use std::borrow::{Borrow, BorrowMut};
+
+    use crate::vec::Vec;
+
+    #[test]
+    fn test_borrow() {
+        let vec: Vec<i32> = Vec::from(vec![2, 1, 3]);
+        let std: &std::vec::Vec<i32> = vec.borrow();
+        assert_eq!(std, &vec);
+    }
+
+    #[test]
+    fn test_borrow_mut() {
+        let mut vec: Vec<i32> = Vec::from(vec![2, 1, 3]);
+        let std: &std::vec::Vec<i32> = vec.borrow_mut();
+        assert_eq!(std.len(), 3);
+    }
+}

@@ -21,6 +21,6 @@ RUN mkdir src && \
 COPY src src
 
 RUN cargo build --verbose
-RUN cargo test --verbose --tests
+RUN cargo test --verbose --tests -v
 
 RUN grcov . -s . --binary-path ./target/debug/ -t html --branch --ignore-not-existing -o ./target/debug/coverage/

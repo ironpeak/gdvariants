@@ -1207,4 +1207,195 @@ mod tests {
         assert_eq!(stdres, crateres);
         assert_eq!(stdvec, cratevec);
     }
+
+    #[test]
+    fn test_shrink_to_fit() {
+        let mut stdvec = vec![2, 1, 3];
+        let mut cratevec = Vec::from(vec![2, 1, 3]);
+
+        stdvec.reserve(10);
+        cratevec.reserve(10);
+
+        assert_eq!(stdvec.capacity(), cratevec.capacity());
+
+        stdvec.shrink_to_fit();
+        cratevec.shrink_to_fit();
+
+        assert_eq!(stdvec.capacity(), cratevec.capacity());
+        assert_eq!(stdvec, cratevec);
+    }
+
+    #[test]
+    fn test_shrink_to() {
+        let mut stdvec = vec![2, 1, 3];
+        let mut cratevec = Vec::from(vec![2, 1, 3]);
+
+        stdvec.reserve(10);
+        cratevec.reserve(10);
+
+        assert_eq!(stdvec.capacity(), cratevec.capacity());
+
+        stdvec.shrink_to(5);
+        cratevec.shrink_to(5);
+
+        assert_eq!(stdvec.capacity(), cratevec.capacity());
+        assert_eq!(stdvec, cratevec);
+    }
+
+    #[test]
+    fn test_truncate() {
+        let mut stdvec = vec![2, 1, 3];
+        let mut cratevec = Vec::from(vec![2, 1, 3]);
+
+        stdvec.truncate(2);
+        cratevec.truncate(2);
+
+        assert_eq!(stdvec, cratevec);
+    }
+
+    #[test]
+    fn test_as_slice() {
+        let stdvec = vec![2, 1, 3];
+        let cratevec = Vec::from(vec![2, 1, 3]);
+
+        let stdres = stdvec.as_slice();
+        let crateres = cratevec.as_slice();
+
+        assert_eq!(stdres, crateres);
+    }
+
+    #[test]
+    fn test_as_mut_slice() {
+        let mut stdvec = vec![2, 1, 3];
+        let mut cratevec = Vec::from(vec![2, 1, 3]);
+
+        let stdres = stdvec.as_mut_slice();
+        let crateres = cratevec.as_mut_slice();
+
+        assert_eq!(stdres, crateres);
+    }
+
+    #[test]
+    fn test_as_ptr() {
+        let stdvec = vec![2, 1, 3];
+        let cratevec = Vec::from(vec![2, 1, 3]);
+
+        let stdres = stdvec.as_ptr();
+        let crateres = cratevec.as_ptr();
+
+        unsafe {
+            assert_eq!(*stdres, *crateres);
+        }
+    }
+
+    #[test]
+    fn test_as_mut_ptr() {
+        let mut stdvec = vec![2, 1, 3];
+        let mut cratevec = Vec::from(vec![2, 1, 3]);
+
+        stdvec.truncate(1);
+        cratevec.truncate(1);
+
+        unsafe {
+            stdvec.set_len(3);
+            cratevec.set_len(3);
+        }
+
+        assert_eq!(stdvec, cratevec);
+    }
+
+    #[test]
+    fn test_swap_remove() {
+        let mut stdvec = vec![2, 1, 3];
+        let mut cratevec = Vec::from(vec![2, 1, 3]);
+
+        let stdres = stdvec.swap_remove(0);
+        let crateres = cratevec.swap_remove(0);
+
+        assert_eq!(stdres, crateres);
+        assert_eq!(stdvec, cratevec);
+    }
+
+    #[test]
+    fn test_insert() {
+        let mut stdvec = vec![2, 1, 3];
+        let mut cratevec = Vec::from(vec![2, 1, 3]);
+
+        stdvec.insert(1, 4);
+        cratevec.insert(1, 4);
+
+        assert_eq!(stdvec, cratevec);
+    }
+
+    #[test]
+    fn test_remove() {
+        let mut stdvec = vec![2, 1, 3];
+        let mut cratevec = Vec::from(vec![2, 1, 3]);
+
+        stdvec.remove(1);
+        cratevec.remove(1);
+
+        assert_eq!(stdvec, cratevec);
+    }
+
+    #[test]
+    fn test_push() {
+        let mut stdvec = vec![2, 1, 3];
+        let mut cratevec = Vec::from(vec![2, 1, 3]);
+
+        stdvec.push(4);
+        cratevec.push(4);
+
+        assert_eq!(stdvec, cratevec);
+    }
+
+    #[test]
+    fn test_pop() {
+        let mut stdvec = vec![2, 1, 3];
+        let mut cratevec = Vec::from(vec![2, 1, 3]);
+
+        let stdres = stdvec.pop();
+        let crateres = cratevec.pop();
+
+        assert_eq!(stdres, crateres);
+        assert_eq!(stdvec, cratevec);
+    }
+
+    #[test]
+    fn test_append() {
+        let mut stdvec = vec![2, 1, 3];
+        let mut cratevec = Vec::from(vec![2, 1, 3]);
+
+        stdvec.append(&mut vec![4, 3, 5]);
+        cratevec.append(&mut Vec::from(vec![4, 3, 5]));
+
+        assert_eq!(stdvec, cratevec);
+    }
+
+    #[test]
+    fn test_clear() {
+        let mut stdvec = vec![2, 1, 3];
+        let mut cratevec = Vec::from(vec![2, 1, 3]);
+
+        stdvec.clear();
+        cratevec.clear();
+
+        assert_eq!(stdvec, cratevec);
+    }
+
+    #[test]
+    fn test_len() {
+        let stdvec = vec![2, 1, 3];
+        let cratevec = Vec::from(vec![2, 1, 3]);
+
+        assert_eq!(stdvec.len(), cratevec.len());
+    }
+
+    #[test]
+    fn test_is_empty() {
+        let stdvec = vec![2, 1, 3];
+        let cratevec = Vec::from(vec![2, 1, 3]);
+
+        assert_eq!(stdvec.is_empty(), cratevec.is_empty());
+    }
 }
