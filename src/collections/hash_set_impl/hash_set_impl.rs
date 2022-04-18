@@ -374,12 +374,12 @@ where
     /// }
     ///
     /// let diff: HashSet<_> = a.difference(&b).collect();
-    /// assert_eq!(diff, [1].iter().collect());
+    /// assert_eq!(diff, [1].iter().collect::<HashSet<&i32>>());
     ///
     /// // Note that difference is not symmetric,
     /// // and `b - a` means something else:
     /// let diff: HashSet<_> = b.difference(&a).collect();
-    /// assert_eq!(diff, [4].iter().collect());
+    /// assert_eq!(diff, [4].iter().collect::<HashSet<&i32>>());
     /// ```
     #[inline]
     pub fn difference<'a>(&'a self, other: &'a HashSet<T, S>) -> Difference<'a, T, S> {
@@ -405,7 +405,7 @@ where
     /// let diff2: HashSet<_> = b.symmetric_difference(&a).collect();
     ///
     /// assert_eq!(diff1, diff2);
-    /// assert_eq!(diff1, [1, 4].iter().collect());
+    /// assert_eq!(diff1, [1, 4].iter().collect::<HashSet<&i32>>());
     /// ```
     #[inline]
     pub fn symmetric_difference<'a>(
@@ -431,7 +431,7 @@ where
     /// }
     ///
     /// let intersection: HashSet<_> = a.intersection(&b).collect();
-    /// assert_eq!(intersection, [2, 3].iter().collect());
+    /// assert_eq!(intersection, [2, 3].iter().collect::<HashSet<&i32>>());
     /// ```
     #[inline]
     pub fn intersection<'a>(&'a self, other: &'a HashSet<T, S>) -> Intersection<'a, T, S> {
@@ -454,7 +454,7 @@ where
     /// }
     ///
     /// let union: HashSet<_> = a.union(&b).collect();
-    /// assert_eq!(union, [1, 2, 3, 4].iter().collect());
+    /// assert_eq!(union, [1, 2, 3, 4].iter().collect::<HashSet<&i32>>());
     /// ```
     #[inline]
     pub fn union<'a>(&'a self, other: &'a HashSet<T, S>) -> Union<'a, T, S> {
