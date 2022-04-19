@@ -671,3 +671,72 @@ where
         self.base.take(value)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::collections::HashSet;
+
+    #[test]
+    fn test_new() {
+        let stdset: std::collections::HashSet<i32> = std::collections::HashSet::new();
+        let crateset: HashSet<i32> = HashSet::new();
+
+        assert_eq!(stdset, crateset);
+    }
+
+    #[test]
+    fn test_with_capacity() {
+        let stdset: std::collections::HashSet<i32> = std::collections::HashSet::with_capacity(10);
+        let crateset: HashSet<i32> = HashSet::with_capacity(10);
+
+        assert_eq!(stdset.capacity(), crateset.capacity());
+        assert_eq!(stdset, crateset);
+    }
+
+    #[test]
+    fn test_iter() {
+        let stdset: std::collections::HashSet<i32> = std::collections::HashSet::from([2, 1, 3]);
+        let crateset: HashSet<i32> = HashSet::from([2, 1, 3]);
+
+        let mut stdres: Vec<&i32> = stdset.iter().collect();
+        let mut crateres: Vec<&i32> = crateset.iter().collect();
+
+        stdres.sort();
+        crateres.sort();
+
+        assert_eq!(stdres, crateres);
+    }
+
+    #[test]
+    fn test_len() {
+        let stdset: std::collections::HashSet<i32> = std::collections::HashSet::from([2, 1, 3]);
+        let crateset: HashSet<i32> = HashSet::from([2, 1, 3]);
+
+        let stdres = stdset.len();
+        let crateres = crateset.len();
+
+        assert_eq!(stdres, crateres);
+    }
+
+    #[test]
+    fn test_is_empty() {
+        let stdset: std::collections::HashSet<i32> = std::collections::HashSet::from([2, 1, 3]);
+        let crateset: HashSet<i32> = HashSet::from([2, 1, 3]);
+
+        let stdres = stdset.is_empty();
+        let crateres = crateset.is_empty();
+
+        assert_eq!(stdres, crateres);
+    }
+
+    #[test]
+    fn test_clear() {
+        let mut stdset: std::collections::HashSet<i32> = std::collections::HashSet::from([2, 1, 3]);
+        let mut crateset: HashSet<i32> = HashSet::from([2, 1, 3]);
+
+        stdset.clear();
+        crateset.clear();
+
+        assert_eq!(stdset, crateset);
+    }
+}

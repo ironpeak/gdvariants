@@ -15,7 +15,7 @@ mod tests {
     use crate::vec::Vec;
 
     #[test]
-    fn test_borrow_mut_vec() {
+    fn test_borrow_mut() {
         let mut stdvec = vec![2, 1, 3];
         let mut cratevec = Vec::from(vec![2, 1, 3]);
 

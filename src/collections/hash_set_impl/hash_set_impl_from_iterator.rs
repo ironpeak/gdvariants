@@ -14,3 +14,17 @@ where
         set
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::collections::HashSet;
+
+    #[test]
+    fn test_from_iter() {
+        let stdset: std::collections::HashSet<i32> =
+            std::collections::HashSet::from_iter([2, 1, 3]);
+        let crateset: HashSet<i32> = HashSet::from_iter([2, 1, 3]);
+
+        assert_eq!(stdset, crateset);
+    }
+}

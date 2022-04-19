@@ -105,3 +105,32 @@ where
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::collections::HashSet;
+
+    #[test]
+    fn test_a() {
+        let set_a = HashSet::from([2, 1, 3]);
+        let set_b = HashSet::from([1, 5, 3]);
+
+        assert_eq!(&set_a & &set_b, HashSet::from([1, 3]));
+    }
+
+    #[test]
+    fn test_b() {
+        let set_a = std::collections::HashSet::from([2, 1, 3]);
+        let set_b = HashSet::from([1, 5, 3]);
+
+        assert_eq!(&set_a & &set_b, HashSet::from([1, 3]));
+    }
+
+    #[test]
+    fn test_c() {
+        let set_a = HashSet::from([2, 1, 3]);
+        let set_b = std::collections::HashSet::from([1, 5, 3]);
+
+        assert_eq!(&set_a & &set_b, HashSet::from([1, 3]));
+    }
+}

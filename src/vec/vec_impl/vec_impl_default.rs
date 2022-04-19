@@ -12,7 +12,7 @@ mod tests {
     use crate::vec::Vec;
 
     #[test]
-    fn test_default_vec() {
+    fn test_default() {
         let stdvec: std::vec::Vec<i32> = std::vec::Vec::default();
         let cratevec: Vec<i32> = Vec::default();
 
