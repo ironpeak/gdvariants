@@ -13,5 +13,13 @@ categories = ["game-development"]
 edition = "2021"
 include = ["src/", "LICENSE-*", "README.md", "COPYRIGHT"]
 
+[features]
+default = []
+serde = ["dep:serde"]
+
 [dependencies]
 gdnative = "0.10.0"
+serde = { version = "1", optional = true }
+
+[dev-dependencies]
+serde_json = { version = "1" }

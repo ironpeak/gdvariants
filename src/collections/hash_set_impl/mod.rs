@@ -13,3 +13,6 @@ mod hash_set_impl_from_iterator;
 mod hash_set_impl_into_iterator;
 mod hash_set_impl_partial_eq;
 mod hash_set_impl_sub;
+
+#[cfg(feature = "serde")]
+pub mod serde;

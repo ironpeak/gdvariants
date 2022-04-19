@@ -1144,7 +1144,7 @@ mod tests {
     #[test]
     fn test_new() {
         let stdvec: std::vec::Vec<i32> = std::vec::Vec::new();
-        let cratevec = Vec::new();
+        let cratevec: Vec<i32> = Vec::new();
 
         assert_eq!(stdvec, cratevec);
     }
@@ -1152,7 +1152,7 @@ mod tests {
     #[test]
     fn test_with_capacity() {
         let stdvec: std::vec::Vec<i32> = std::vec::Vec::with_capacity(3);
-        let cratevec = Vec::with_capacity(3);
+        let cratevec: Vec<i32> = Vec::with_capacity(3);
 
         assert_eq!(stdvec.capacity(), cratevec.capacity());
         assert_eq!(stdvec, cratevec);

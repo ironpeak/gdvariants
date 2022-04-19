@@ -22,3 +22,6 @@ mod vec_impl_partial_eq;
 mod vec_impl_partial_ord;
 mod vec_impl_try_from;
 mod vec_impl_write;
+
+#[cfg(feature = "serde")]
+pub mod serde;
