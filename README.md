@@ -80,3 +80,7 @@ fn receive_data(&mut self, owner: &Node, data: HashMap<i64, i64>) {
     }
 }
 ~~~
+
+## Crate Features
+
+* serde: enables deserialize and serialize for collections.
