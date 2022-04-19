@@ -12,3 +12,19 @@ where
         self.base.fmt(f)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::collections::HashMap;
+
+    #[test]
+    fn test_debug() {
+        let stdmap = std::collections::HashMap::from([(2, 4), (1, 2), (3, 6)]);
+        let cratemap = HashMap::from([(2, 4), (1, 2), (3, 6)]);
+
+        let stdres = format!("{:?}", &stdmap);
+        let crateres = format!("{:?}", &cratemap);
+
+        assert_eq!(stdres.len(), crateres.len());
+    }
+}
