@@ -52,3 +52,19 @@ impl<K, V, S> IntoIterator for HashMap<K, V, S> {
         self.base.into_iter()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::collections::HashMap;
+
+    #[test]
+    fn test_into_iterator() {
+        let stdmap = std::collections::HashMap::from([(2, 4), (1, 2), (3, 6)]);
+        let cratemap = HashMap::from([(2, 4), (1, 2), (3, 6)]);
+
+        let stdres: HashMap<i32, i32> = stdmap.into_iter().collect();
+        let crateres: HashMap<i32, i32> = cratemap.into_iter().collect();
+
+        assert_eq!(stdres, crateres);
+    }
+}

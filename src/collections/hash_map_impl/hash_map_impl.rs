@@ -727,3 +727,167 @@ where
         self.base.remove_entry(k)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use std::collections::hash_map::RandomState;
+
+    use crate::collections::HashMap;
+
+    #[test]
+    fn test_new() {
+        let stdmap: std::collections::HashMap<i32, i32> = std::collections::HashMap::new();
+        let cratemap: HashMap<i32, i32> = HashMap::new();
+
+        assert_eq!(stdmap, cratemap);
+    }
+
+    #[test]
+    fn test_with_capacity() {
+        let stdmap: std::collections::HashMap<i32, i32> =
+            std::collections::HashMap::with_capacity(10);
+        let cratemap: HashMap<i32, i32> = HashMap::with_capacity(10);
+
+        assert_eq!(stdmap.capacity(), cratemap.capacity());
+        assert_eq!(stdmap, cratemap);
+    }
+
+    #[test]
+    fn test_with_capacity_and_hasher() {
+        let stdmap: std::collections::HashMap<i32, i32> =
+            std::collections::HashMap::with_capacity_and_hasher(10, RandomState::default());
+        let cratemap: HashMap<i32, i32> =
+            HashMap::with_capacity_and_hasher(10, RandomState::default());
+
+        assert_eq!(stdmap.capacity(), cratemap.capacity());
+        assert_eq!(stdmap, cratemap);
+    }
+
+    #[test]
+    fn test_keys() {
+        let stdmap = std::collections::HashMap::from([(2, 4), (1, 2), (3, 6)]);
+        let cratemap = HashMap::from([(2, 4), (1, 2), (3, 6)]);
+
+        let mut stdres: Vec<&i32> = stdmap.keys().collect();
+        let mut crateres: Vec<&i32> = cratemap.keys().collect();
+
+        stdres.sort();
+        crateres.sort();
+
+        assert_eq!(stdres, crateres);
+        assert_eq!(stdmap, cratemap);
+    }
+
+    #[test]
+    fn test_into_keys() {
+        let stdmap = std::collections::HashMap::from([(2, 4), (1, 2), (3, 6)]);
+        let cratemap = HashMap::from([(2, 4), (1, 2), (3, 6)]);
+
+        let mut stdres: Vec<i32> = stdmap.into_keys().collect();
+        let mut crateres: Vec<i32> = cratemap.into_keys().collect();
+
+        stdres.sort();
+        crateres.sort();
+
+        assert_eq!(stdres, crateres);
+    }
+
+    #[test]
+    fn test_values() {
+        let stdmap = std::collections::HashMap::from([(2, 4), (1, 2), (3, 6)]);
+        let cratemap = HashMap::from([(2, 4), (1, 2), (3, 6)]);
+
+        let mut stdres: Vec<&i32> = stdmap.values().collect();
+        let mut crateres: Vec<&i32> = cratemap.values().collect();
+
+        stdres.sort();
+        crateres.sort();
+
+        assert_eq!(stdres, crateres);
+        assert_eq!(stdmap, cratemap);
+    }
+
+    #[test]
+    fn test_values_mut() {
+        let mut stdmap = std::collections::HashMap::from([(2, 4), (1, 2), (3, 6)]);
+        let mut cratemap = HashMap::from([(2, 4), (1, 2), (3, 6)]);
+
+        let mut stdres: Vec<i32> = stdmap.values_mut().map(|x| x.clone()).collect();
+        let mut crateres: Vec<i32> = cratemap.values_mut().map(|x| x.clone()).collect();
+
+        stdres.sort();
+        crateres.sort();
+
+        assert_eq!(stdres, crateres);
+        assert_eq!(stdmap, cratemap);
+    }
+
+    #[test]
+    fn test_into_values() {
+        let stdmap = std::collections::HashMap::from([(2, 4), (1, 2), (3, 6)]);
+        let cratemap = HashMap::from([(2, 4), (1, 2), (3, 6)]);
+
+        let mut stdres: Vec<i32> = stdmap.into_values().collect();
+        let mut crateres: Vec<i32> = cratemap.into_values().collect();
+
+        stdres.sort();
+        crateres.sort();
+
+        assert_eq!(stdres, crateres);
+    }
+
+    #[test]
+    fn test_iter() {
+        let stdmap = std::collections::HashMap::from([(2, 4), (1, 2), (3, 6)]);
+        let cratemap = HashMap::from([(2, 4), (1, 2), (3, 6)]);
+
+        let mut stdres: Vec<(&i32, &i32)> = stdmap.iter().collect();
+        let mut crateres: Vec<(&i32, &i32)> = cratemap.iter().collect();
+
+        stdres.sort();
+        crateres.sort();
+
+        assert_eq!(stdres, crateres);
+    }
+
+    #[test]
+    fn test_iter_mut() {
+        let mut stdmap = std::collections::HashMap::from([(2, 4), (1, 2), (3, 6)]);
+        let mut cratemap = HashMap::from([(2, 4), (1, 2), (3, 6)]);
+
+        let mut stdres: Vec<(&i32, &mut i32)> = stdmap.iter_mut().collect();
+        let mut crateres: Vec<(&i32, &mut i32)> = cratemap.iter_mut().collect();
+
+        stdres.sort();
+        crateres.sort();
+
+        assert_eq!(stdres, crateres);
+    }
+
+    #[test]
+    fn test_len() {
+        let stdmap = std::collections::HashMap::from([(2, 4), (1, 2), (3, 6)]);
+        let cratemap = HashMap::from([(2, 4), (1, 2), (3, 6)]);
+
+        assert_eq!(stdmap.len(), cratemap.len());
+    }
+
+    #[test]
+    fn test_is_empty() {
+        let stdmap = std::collections::HashMap::from([(2, 4), (1, 2), (3, 6)]);
+        let cratemap = HashMap::from([(2, 4), (1, 2), (3, 6)]);
+
+        assert_eq!(stdmap.is_empty(), cratemap.is_empty());
+    }
+
+    #[test]
+    fn test_clear() {
+        let mut stdmap = std::collections::HashMap::from([(2, 4), (1, 2), (3, 6)]);
+        let mut cratemap = HashMap::from([(2, 4), (1, 2), (3, 6)]);
+
+        stdmap.clear();
+        cratemap.clear();
+
+        assert_eq!(stdmap, cratemap);
+    }
+}
