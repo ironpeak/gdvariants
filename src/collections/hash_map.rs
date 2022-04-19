@@ -265,3 +265,24 @@ impl<K, V> From<std::collections::HashMap<K, V>> for HashMap<K, V> {
         HashMap { base: map }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use std::borrow::{Borrow, BorrowMut};
+
+    use crate::collections::HashMap;
+
+    #[test]
+    fn test_borrow() {
+        let map: HashMap<i32, i32> = HashMap::from([(2, 4), (1, 2), (3, 6)]);
+        let std: &std::collections::HashMap<i32, i32> = map.borrow();
+        assert_eq!(std, &map);
+    }
+
+    #[test]
+    fn test_borrow_mut() {
+        let mut map: HashMap<i32, i32> = HashMap::from([(2, 4), (1, 2), (3, 6)]);
+        let std: &std::collections::HashMap<i32, i32> = map.borrow_mut();
+        assert_eq!(std.len(), 3);
+    }
+}

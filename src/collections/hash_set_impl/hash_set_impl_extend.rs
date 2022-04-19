@@ -23,3 +23,19 @@ where
         self.base.extend(iter.into_iter().cloned());
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::collections::HashSet;
+
+    #[test]
+    fn test_extend() {
+        let mut stdset = std::collections::HashSet::from([2, 1, 3]);
+        let mut crateset = HashSet::from([2, 1, 3]);
+
+        stdset.extend([1, 2, 3]);
+        crateset.extend([1, 2, 3]);
+
+        assert_eq!(stdset, crateset);
+    }
+}

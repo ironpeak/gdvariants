@@ -10,3 +10,19 @@ where
         self.base.fmt(f)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::collections::HashSet;
+
+    #[test]
+    fn test_clone() {
+        let stdset = std::collections::HashSet::from([2, 1, 3]);
+        let crateset = HashSet::from([2, 1, 3]);
+
+        let stdres: String = format!("{:?}", &stdset);
+        let crateres: String = format!("{:?}", &crateset);
+
+        assert_eq!(stdres.len(), crateres.len());
+    }
+}

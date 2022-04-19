@@ -41,3 +41,19 @@ impl<'a, T, S> IntoIterator for &'a HashSet<T, S> {
         self.base.iter()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::collections::HashSet;
+
+    #[test]
+    fn test_into_iterator() {
+        let stdvec = std::collections::HashSet::from([2, 1, 3]);
+        let cratevec = HashSet::from([2, 1, 3]);
+
+        assert_eq!(
+            stdvec.into_iter().collect::<HashSet<i32>>(),
+            cratevec.into_iter().collect::<HashSet<i32>>()
+        );
+    }
+}

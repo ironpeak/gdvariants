@@ -15,7 +15,7 @@ mod tests {
     use crate::vec::Vec;
 
     #[test]
-    fn test_debug_vec() {
+    fn test_debug() {
         let stdvec = vec![2, 1, 3];
         let cratevec = Vec::from(vec![2, 1, 3]);
 

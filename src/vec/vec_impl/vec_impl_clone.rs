@@ -20,7 +20,7 @@ mod tests {
     use crate::vec::Vec;
 
     #[test]
-    fn test_clone_vec() {
+    fn test_clone() {
         let stdvec = vec![2, 1, 3];
         let cratevec = Vec::from(vec![2, 1, 3]);
 
@@ -31,7 +31,7 @@ mod tests {
     }
 
     #[test]
-    fn test_clone_from_vec() {
+    fn test_clone_from() {
         let stdsource = vec![3, 2, 4];
         let cratesource = Vec::from(vec![3, 2, 4]);
 

@@ -19,3 +19,18 @@ where
         Self::from_iter(arr)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::collections::HashSet;
+
+    #[test]
+    fn test_from_array() {
+        let source = [2, 1, 3];
+
+        let stdvec = std::collections::HashSet::from(source);
+        let cratevec = HashSet::from(source);
+
+        assert_eq!(stdvec, cratevec);
+    }
+}

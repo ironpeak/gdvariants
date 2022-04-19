@@ -160,3 +160,24 @@ impl<T> From<std::collections::HashSet<T>> for HashSet<T> {
         HashSet { base: set }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use std::borrow::{Borrow, BorrowMut};
+
+    use crate::collections::HashSet;
+
+    #[test]
+    fn test_borrow() {
+        let set: HashSet<i32> = HashSet::from([2, 1, 3]);
+        let std: &std::collections::HashSet<i32> = set.borrow();
+        assert_eq!(std, &set);
+    }
+
+    #[test]
+    fn test_borrow_mut() {
+        let mut set: HashSet<i32> = HashSet::from([2, 1, 3]);
+        let std: &std::collections::HashSet<i32> = set.borrow_mut();
+        assert_eq!(std.len(), 3);
+    }
+}

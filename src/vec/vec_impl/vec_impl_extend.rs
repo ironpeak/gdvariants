@@ -33,7 +33,7 @@ mod tests {
     use crate::vec::Vec;
 
     #[test]
-    fn test_extend_vec() {
+    fn test_extend() {
         let mut stdvec = vec![2, 1, 3];
         let mut cratevec = Vec::from(vec![2, 1, 3]);
 
