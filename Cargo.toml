@@ -1,6 +1,6 @@
 [package]
 name = "gdvariants"
-version = "1.0.0"
+version = "1.1.0"
 authors = ["Hrafn Orri Hrafnkelsson"]
 license = "MIT OR Apache-2.0"
 readme = "README.md"
