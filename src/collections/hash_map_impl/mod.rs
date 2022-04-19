@@ -10,3 +10,6 @@ mod hash_map_impl_from_iterator;
 mod hash_map_impl_index;
 mod hash_map_impl_into_iterator;
 mod hash_map_impl_partial_eq;
+
+#[cfg(feature = "serde")]
+pub mod serde;
